@@ -41,3 +41,5 @@ blur_mask  = function(mask, verbose = TRUE) {
   blurmask <- blurmask * 100
   return(list(indices = newindx, blurred_mask = blurmask))
 }
+
+

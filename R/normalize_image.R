@@ -10,6 +10,7 @@
 #' @export
 #' @importFrom pracma findpeaks
 #' @importFrom KernSmooth bkde
+#' @importFrom stats quantile
 #'
 #' @examples
 #' set.seed(1)

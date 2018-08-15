@@ -22,7 +22,8 @@ Imports:
     neurobase,
     KernSmooth,
     reticulate,
-    pracma
+    pracma,
+    stats
 Suggests: 
     covr,
     knitr,
