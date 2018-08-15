@@ -1,6 +1,11 @@
 language: R
 sudo: no
 cache: packages
+
+before_script:
+  - pip2.7 install --upgrade --ignore-installed --user numpy scipy
+
+
 after_success: if [ "$TRAVIS_OS_NAME" == "linux" ]; then Rscript -e 'covr::codecov(type
   = "all")'; fi
 warnings_are_errors: yes
