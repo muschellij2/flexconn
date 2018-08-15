@@ -12,11 +12,11 @@ image_peak(vol, contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
   verbose = TRUE)
 }
 \arguments{
+\item{vol}{3D array or \code{nifti} image}
+
 \item{contrast}{What imaging sequence of MRI is this volume}
 
 \item{verbose}{print diagnostic messages}
-
-\item{t1}{3D array or \code{nifti} image}
 }
 \value{
 The peak of the image is returned for \code{image_peak}

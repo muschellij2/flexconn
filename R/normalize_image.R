@@ -1,7 +1,7 @@
 
 #' Normalize Image Based on the Peak
 #'
-#' @param t1 3D array or \code{nifti} image
+#' @param vol 3D array or \code{nifti} image
 #' @param contrast What imaging sequence of MRI is this volume
 #' @param verbose print diagnostic messages
 #'
@@ -21,14 +21,14 @@
 normalize_image <- function(vol,
                             contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
                             verbose = TRUE) {
-  vol = vol / normalize_image(vol, contrast)
+  vol = vol / image_peak(vol, contrast)
 }
 
 #' @rdname normalize_image
 #' @export
 image_peak <- function(vol,
-                            contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
-                            verbose = TRUE) {
+                       contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
+                       verbose = TRUE) {
 
   contrast = toupper(contrast)
   contrast = match.arg(contrast)
@@ -54,7 +54,9 @@ image_peak <- function(vol,
   indx <- pracma::findpeaks(x)[, 2]
   heights <- x[indx]
   peaks <- y[indx]
-  cat(length(peaks), "peaks found.", "\n")
+  if (verbose) {
+    message(paste(length(peaks), " peaks found.", "\n"))
+  }
   if (contrast == "T1") {
     peak <- peaks[length(peaks)]
   } else if (contrast %in% c("T2", "PD", "FL")) {
@@ -62,7 +64,7 @@ image_peak <- function(vol,
     peak <- peaks[which.max(heights)]
   }
   if (verbose) {
-    message(paste0("Peak found at", peak, "for", contrast, "\n"))
+    message(paste("Peak found at", peak, "for", contrast, "\n"))
   }
   peak
 }
