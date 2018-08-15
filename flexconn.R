@@ -1,0 +1,207 @@
+library(keras)
+library(neurobase)
+library(KernSmooth)
+library(reticulate)
+library(pracma)
+
+
+
+# Functions ---------------------------------------------------------------
+
+
+
+
+
+# Configuration -----------------------------------------------------------
+
+atlas_dir <- "lesion_challenge"
+n_atlas <- 1
+psize <- 35
+model_dir <- "saved_models"
+
+patchsize <- c(psize, psize)
+padsize <- max(patchsize + 1) / 2
+
+
+# Read data ---------------------------------------------------------------
+
+num_patches <- 0
+for (i in 1:n_atlas) {
+  p <-
+    readnii(file.path(atlas_dir, paste0("atlas", i, "_mask.nii.gz")))
+  num_patches <- num_patches + img_data(p) %>% sum()
+}
+
+cat("Total number of lesion patches =" , num_patches, "\n")
+
+matsize <- c(num_patches, patchsize[1], patchsize[2], 1)
+
+t1_patches <- array(0, dim = matsize)
+fl_patches <- array(0, dim = matsize)
+mask_patches <- array(0, dim = matsize)
+
+count2 <- 1
+count1 <- 1
+
+for (i in 1:n_atlas) {
+  t1name <- file.path(atlas_dir, paste0("atlas", i, "_T1.nii.gz"))
+  cat("Reading", t1name, "\n")
+  t1 <- readnii(t1name) %>% img_data()
+  flname <- file.path(atlas_dir, paste0("atlas", i, "_FL.nii.gz"))
+  cat("Reading", flname, "\n")
+  fl <- readnii(flname) %>% img_data()
+  maskname <-
+    file.path(atlas_dir, paste0("atlas", i, "_mask.nii.gz"))
+  cat("Reading", maskname, "\n")
+  mask <- readnii(maskname) %>% img_data()
+
+  t1 <- t1 / normalize_image(t1, 'T1')
+  fl <- fl / normalize_image(fl, 'FL')
+
+  padded_t1 <- pad_image(t1, padsize)
+  padded_fl <- pad_image(fl, padsize)
+  padded_mask <- pad_image(mask, padsize)
+
+  cat("T1 orig dim: ", dim(t1), "\n")
+  cat("T1 padded to dim: ", dim(padded_t1), "\n")
+
+  c(t1_patches_a, fl_patches_a, mask_patches_a) %<-% get_patches(padded_t1, padded_fl, padded_mask, patchsize)
+
+  cat("Dim of T1 patches:", dim(t1_patches_a), "\n")
+
+  pdim <- dim(t1_patches_a)
+  count2 <- count1 + pdim[1] - 1
+  cat("Atlas", i, "indices:", count1, count2, "\n")
+
+  t1_patches[count1:count2, , , ] <- t1_patches_a
+  fl_patches[count1:count2, , , ] <- fl_patches_a
+  mask_patches[count1:count2, , , ] <- mask_patches_a
+  count1 < count1 + pdim[1]
+
+}
+
+cat("Total number of patches collected = ", count2, "\n")
+cat("Size of the input matrix is ", dim(mask_patches), "\n")
+
+
+# Model -------------------------------------------------------------------
+
+ds <- 2
+num_filters <- 128
+kernel_size_1 <- 3
+kernel_size_2 <- 5
+
+batch_size <- 128
+
+conv_chain <- function(prev_layer,
+                       ds,
+                       num_filters,
+                       kernel_size_1,
+                       kernel_size_2,
+                       prefix = NULL) {
+  prev_layer %>%
+    layer_conv_2d(
+      filters = num_filters,
+      kernel_size = kernel_size_1,
+      activation = "relu",
+      padding = "same",
+      name = paste0(prefix, "_conv1")
+    ) %>%
+    layer_conv_2d(
+      filters = num_filters / ds,
+      kernel_size = kernel_size_2,
+      activation = "relu",
+      padding = "same",
+      name = paste0(prefix, "_conv2")
+    ) %>%
+    layer_conv_2d(
+      filters = num_filters / (ds * 2),
+      kernel_size = kernel_size_1,
+      activation = "relu",
+      padding = "same",
+      name = paste0(prefix, "_conv3")
+    ) %>%
+    layer_conv_2d(
+      filters = num_filters / (ds ^ 3),
+      kernel_size = kernel_size_2,
+      activation = "relu",
+      padding = "same",
+      name = paste0(prefix, "_conv4")
+    ) %>%
+    layer_conv_2d(
+      filters = num_filters / (ds ^ 4),
+      kernel_size = kernel_size_1,
+      activation = "relu",
+      padding = "same",
+      name = paste0(prefix, "_conv5")
+    )
+
+}
+
+t1_input <- layer_input(shape = shape(NULL, NULL, 1))
+t1 <- t1_input %>%
+  conv_chain(
+    ds = ds,
+    num_filters = num_filters,
+    kernel_size_1 = kernel_size_1,
+    kernel_size_2 = kernel_size_2,
+    prefix = "t1"
+  )
+
+fl_input <- layer_input(shape = shape(NULL, NULL, 1))
+fl <- fl_input %>%
+  conv_chain(
+    ds = ds,
+    num_filters = num_filters,
+    kernel_size_1 = kernel_size_1,
+    kernel_size_2 = kernel_size_2,
+    prefix = "fl"
+  )
+
+concat <- layer_concatenate(list(t1, fl), axis = -1)
+
+combined <- concat %>%
+  conv_chain(
+    ds = ds,
+    num_filters = num_filters,
+    kernel_size_1 = kernel_size_1,
+    kernel_size_2 = kernel_size_2,
+    prefix = "combined"
+  ) %>%
+  layer_conv_2d(
+    filters = 1,
+    kernel_size = 3,
+    activation = "relu",
+    padding = "same",
+    name = "conv_final"
+  )
+
+model <-
+  keras_model(inputs = list(t1_input, fl_input), outputs = combined)
+model %>% compile(
+  optimizer = optimizer_adam(lr =  0.0001),
+  loss = "mean_squared_error",
+  metrics = c("mean_squared_error")
+)
+
+history <- model %>% fit(
+  x = list(t1_patches, fl_patches),
+  y = mask_patches,
+  batch_size = batch_size,
+  epochs = 10,
+  validation_split = 0.3
+)
+
+plot(history, metrics = "loss")
+
+preds <-
+  model %>% predict(list(t1_patches[1:10, , , , drop = FALSE],
+                         fl_patches[1:10, , , , drop = FALSE]))
+dim(preds)
+true <- mask_patches[1:10, , , , drop = FALSE]
+cor(true, preds)
+preds[1, , , ]
+preds[1, , , ] %>% image(col = grey.colors(n=10))
+true[1, , , ]
+true[1, , , ] %>% image(col = grey.colors(n=10))
+

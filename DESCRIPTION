@@ -13,16 +13,23 @@ Authors@R:
            role = c("aut", "cre"),
            email = "sigrid@rstudio.com")
            )
-Description: FLEXCONN model for MS lesion segmentation
+Description: FLEXCONN model for multiple sclerosis lesion segmentation 
+    from magnetic resonance imaging ('MRI').  Specifically, the 'MRI'
+    imaging sequences are T1-weighted imaging and 'FLAIR' imaging.
 License: GPL-3
+Imports:
+    keras,
+    neurobase,
+    KernSmooth,
+    reticulate,
+    pracma
 Suggests: 
     covr,
     knitr,
     rmarkdown,
     testthat
-VignetteBuilder: 
-    knitr
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/muschellij2/flexconn
 BugReports: https://github.com/muschellij2/flexconn/issues
+RoxygenNote: 6.1.0
