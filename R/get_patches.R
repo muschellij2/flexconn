@@ -26,10 +26,11 @@
 #' patch = get_patches(t1, flair, mask, patchsize = patchsize)
 #'
 #' rm(patch)
-get_patches <- function(t1, flair, mask, patchsize,
-                        pad = TRUE,
-                        normalize = TRUE,
-                        verbose = TRUE) {
+get_patches <- function(
+  t1, flair, mask, patchsize,
+  pad = TRUE,
+  normalize = TRUE,
+  verbose = TRUE) {
 
   if (pad) {
     padsize = patchsize_to_padsize(patchsize)
@@ -64,6 +65,7 @@ get_patches <- function(t1, flair, mask, patchsize,
 #' before getting patches
 #' @param contrast What imaging sequence of MRI is this volume, passed
 #' to \code{\link{normalize_image}}
+#' @param ... not used
 #'
 #' @return A list of image and mask Patches
 #' @export
@@ -80,10 +82,30 @@ get_patches <- function(t1, flair, mask, patchsize,
 #' patch = get_patch_from_volume(vol, mask, patchsize = patchsize,
 #' contrast = "T1")
 #'
+#' patch = get_patch_from_volume(vol, mask, patchsize = c(1,1,1),
+#' contrast = "T1")
 #' rm(patch)
 #'
-get_patch_from_volume <- function(vol, mask, patchsize, verbose = TRUE,
-                                  normalize = TRUE, contrast) {
+get_patch_from_volume <- function(
+  ..., patchsize) {
+
+  ndim = length(patchsize)
+
+  func = switch(as.character(ndim),
+                "2" = get_2d_patch_from_volume,
+                "3" = get_3d_patch_from_volume)
+  args = list(...)
+  args$patchsize = patchsize
+  res = do.call(func, args = args)
+    return(res)
+}
+
+
+#' @rdname get_patch_from_volume
+#' @export
+get_2d_patch_from_volume <- function(
+  vol, mask, patchsize, verbose = TRUE,
+  normalize = TRUE, contrast) {
 
   vol = check_nifti(vol, allow.array = TRUE)
   if (normalize) {
@@ -111,6 +133,49 @@ get_patch_from_volume <- function(vol, mask, patchsize, verbose = TRUE,
       vol[(x - dsize[1]):(x + dsize[1]), (y - dsize[2]):(y + dsize[2]), z]
     mask_patches[i, , , 1] <-
       blurmask[(x - dsize[1]):(x + dsize[1]), (y - dsize[2]):(y + dsize[2]), z]
+  }
+  list(image_patches = t1_patches, mask_patches = mask_patches)
+}
+
+#' @rdname get_patch_from_volume
+#' @export
+get_3d_patch_from_volume <- function(
+  vol, mask, patchsize, verbose = TRUE,
+  normalize = TRUE, contrast) {
+
+  vol = check_nifti(vol, allow.array = TRUE)
+  if (normalize) {
+    vol = normalize_image(vol = vol, contrast = contrast, verbose = verbose)
+  }
+  mask = check_nifti(mask, allow.array = TRUE)
+  num_patches = sum(mask != 0)
+
+  bmask = blur_mask(mask, verbose = verbose)
+  blurmask = bmask$blurred_mask
+  newindx = bmask$indices
+  dsize <- floor(patchsize / 2)
+
+  matsize = get_matsize(num_patches, patchsize = patchsize)
+  if (verbose) {
+    message("Size matrix to create: ", paste(matsize, collapse = "x"))
+  }
+  t1_patches <- array(0, dim = matsize)
+  mask_patches <- array(0, dim = matsize)
+  for (i in 1:num_patches) {
+    x <- newindx[1, i]
+    y <- newindx[2, i]
+    z <- newindx[3, i]
+    t1_patches[i, , , , 1] <-
+      vol[(x - dsize[1]):(x + dsize[1]),
+          (y - dsize[2]):(y + dsize[2]),
+          (z - dsize[3]):(z + dsize[3])
+          ]
+    mask_patches[i, , , , 1] <-
+      blurmask[
+        (x - dsize[1]):(x + dsize[1]),
+        (y - dsize[2]):(y + dsize[2]),
+        (z - dsize[3]):(z + dsize[3])
+        ]
   }
   list(image_patches = t1_patches, mask_patches = mask_patches)
 }

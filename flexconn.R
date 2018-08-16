@@ -93,12 +93,13 @@ kernel_size_2 <- 5
 
 batch_size <- 128
 
-conv_chain <- function(prev_layer,
-                       ds,
-                       num_filters,
-                       kernel_size_1,
-                       kernel_size_2,
-                       prefix = NULL) {
+conv_chain <- function(
+  prev_layer,
+  ds,
+  num_filters,
+  kernel_size_1,
+  kernel_size_2,
+  prefix = NULL) {
   prev_layer %>%
     layer_conv_2d(
       filters = num_filters,

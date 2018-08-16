@@ -2,17 +2,26 @@
 % Please edit documentation in R/get_patches.R
 \name{get_patch_from_volume}
 \alias{get_patch_from_volume}
+\alias{get_2d_patch_from_volume}
+\alias{get_3d_patch_from_volume}
 \title{Get Patches from 3D Volume}
 \usage{
-get_patch_from_volume(vol, mask, patchsize, verbose = TRUE,
+get_patch_from_volume(..., patchsize)
+
+get_2d_patch_from_volume(vol, mask, patchsize, verbose = TRUE,
+  normalize = TRUE, contrast)
+
+get_3d_patch_from_volume(vol, mask, patchsize, verbose = TRUE,
   normalize = TRUE, contrast)
 }
 \arguments{
+\item{...}{not used}
+
+\item{patchsize}{Vector of length 2 (or more)}
+
 \item{vol}{3D array or \code{nifti} image}
 
 \item{mask}{binary 3D array or \code{nifti} image, for the brain usually}
-
-\item{patchsize}{Vector of length 2 (or more)}
 
 \item{verbose}{print diagnostic messages}
 
@@ -38,6 +47,8 @@ verbose = TRUE
 patch = get_patch_from_volume(vol, mask, patchsize = patchsize,
 contrast = "T1")
 
+patch = get_patch_from_volume(vol, mask, patchsize = c(1,1,1),
+contrast = "T1")
 rm(patch)
 
 }

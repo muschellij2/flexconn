@@ -40,7 +40,7 @@ image_peak <- function(vol,
   bw <- q / 80
   gridsize <- 128 ## scipy rounds up from 80 to 128
   if (verbose) {
-    message(paste0("99th quantile is",
+    message(paste("99th quantile is",
                    q,
                    ", bandwidth =",
                    bw,
