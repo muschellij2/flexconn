@@ -6,6 +6,10 @@ init:
       Import-Module '..\appveyor-tool.ps1'
 
 environment:
+  global:
+    WARNINGS_ARE_ERRORS: 1.0
+    USE_RTOOLS: yes
+    R_CHECK_INSTALL_ARGS: --install-args=--build --no-multiarch
   matrix:
     - PYTHON_VERSION: 2.7
       MINICONDA: C:\Miniconda
@@ -37,11 +41,7 @@ artifacts:
     name: Logs
   - path: \*_*.zip
     name: Bits
-environment:
-  global:
-    WARNINGS_ARE_ERRORS: 1.0
-    USE_RTOOLS: yes
-    R_CHECK_INSTALL_ARGS: --install-args=--build --no-multiarch
+
 deploy:
   provider: GitHub
   description: Windows Binary
