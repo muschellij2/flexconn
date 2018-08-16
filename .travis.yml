@@ -6,7 +6,7 @@ python:
   - "3.6"
 
 before_script:
-  - pip3.6 install --upgrade --ignore-installed --user numpy scipy keras tensorflow
+  - pip install --upgrade --ignore-installed --user numpy scipy keras tensorflow
 
 
 after_success: if [ "$TRAVIS_OS_NAME" == "linux" ]; then Rscript -e 'covr::codecov(type
