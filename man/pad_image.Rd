@@ -2,9 +2,12 @@
 % Please edit documentation in R/pad_image.R
 \name{pad_image}
 \alias{pad_image}
+\alias{invert_pad_image}
 \title{Pad Image}
 \usage{
 pad_image(vol, padsize)
+
+invert_pad_image(vol, padsize)
 }
 \arguments{
 \item{vol}{3D Array or matrix}
@@ -23,4 +26,6 @@ vol = array(rnorm(10^3), dim = rep(10, 3))
 dim(vol)
 padded = pad_image(vol, padsize = 2)
 dim(padded)
+orig = invert_pad_image(padded, padsize = 2)
+testthat::expect_equal(orig, vol)
 }

@@ -12,6 +12,8 @@
 #' dim(vol)
 #' padded = pad_image(vol, padsize = 2)
 #' dim(padded)
+#' orig = invert_pad_image(padded, padsize = 2)
+#' testthat::expect_equal(orig, vol)
 pad_image <- function(vol, padsize) {
   vol = as.array(vol)
   dim_orig <- dim(vol)
@@ -20,4 +22,16 @@ pad_image <- function(vol, padsize) {
   padded[(padsize + 1):(dim_orig[1] + padsize), (padsize + 1):(dim_orig[2] + padsize),
          (padsize + 1):(dim_orig[3] + padsize)] <- vol
   padded
+}
+
+#' @rdname pad_image
+#' @export
+invert_pad_image <- function(vol, padsize) {
+  dim_pad <- dim(vol)
+  dim_orig <- dim_pad - 2 * padsize
+  vol = as.array(vol)
+  unpadded = vol[(padsize + 1):(dim_orig[1] + padsize),
+                 (padsize + 1):(dim_orig[2] + padsize),
+                 (padsize + 1):(dim_orig[3] + padsize)]
+  unpadded
 }
