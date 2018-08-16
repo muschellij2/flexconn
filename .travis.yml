@@ -3,7 +3,7 @@ sudo: no
 cache: packages
 
 before_script:
-  - pip2.7 install --upgrade --ignore-installed --user numpy scipy keras
+  - pip2.7 install --upgrade --ignore-installed --user numpy scipy keras tensorflow
 
 
 after_success: if [ "$TRAVIS_OS_NAME" == "linux" ]; then Rscript -e 'covr::codecov(type
