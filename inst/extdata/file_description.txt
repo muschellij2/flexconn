@@ -1,0 +1,9 @@
+MPRAGE.nii.gz                            : T1-w MPRAGE of a subject (skull-stripped and bias-corrected)
+FLAIR.nii.gz                             : FLAIR image, registered to the MPRAGE (skull-stripped and bias-corrected)
+MPRAGE_LesionMask_21atlases.nii.gz       : Lesion mask obtained using the two models trained with 21 atlases
+MPRAGE_LesionMembership_21atlases.nii.gz : Lesion membership obtained using the two models trained with 21 atlases
+MPRAGE_LesionMask_61atlases.nii.gz       : Lesion mask obtained using the two models trained with 61 atlases
+MPRAGE_LesionMembership_61atlases.nii.gz : Lesion membership obtained using the two models trained with 61 atlases
+MPRAGE_manual.nii.gz                     : Manual lesion segmentation
+
+

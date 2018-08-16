@@ -1,3 +1,4 @@
-# flexconn 0.1.0
+# flexconn 0.1.1
 
 * Added a `NEWS.md` file to track changes to the package.
+* Added data to the package.

@@ -4,20 +4,40 @@
 \alias{get_patch_from_volume}
 \title{Get Patches from 3D Volume}
 \usage{
-get_patch_from_volume(vol, mask, patchsize, verbose = TRUE)
+get_patch_from_volume(vol, mask, patchsize, verbose = TRUE,
+  normalize = TRUE, contrast)
 }
 \arguments{
 \item{vol}{3D array or \code{nifti} image}
 
-\item{mask}{binary 3D array or \code{nifti} image}
+\item{mask}{binary 3D array or \code{nifti} image, for the brain usually}
 
 \item{patchsize}{Vector of length 2 (or more)}
 
 \item{verbose}{print diagnostic messages}
+
+\item{normalize}{Run \code{\link{normalize_image}} on the image
+before getting patches}
+
+\item{contrast}{What imaging sequence of MRI is this volume, passed
+to \code{\link{normalize_image}}}
 }
 \value{
 A list of image and mask Patches
 }
 \description{
 Get Patches from 3D Volume
+}
+\examples{
+library(neurobase)
+fname = system.file("extdata", "MPRAGE.nii.gz", package = "flexconn")
+vol = readnii(fname)
+mask = vol > 0
+patchsize = c(5, 5)
+verbose = TRUE
+patch = get_patch_from_volume(vol, mask, patchsize = patchsize,
+contrast = "T1")
+
+rm(patch)
+
 }

@@ -4,7 +4,8 @@
 \alias{get_patches}
 \title{Get Patches from T1 and FLAIR image}
 \usage{
-get_patches(t1, flair, mask, patchsize, verbose = TRUE)
+get_patches(t1, flair, mask, patchsize, pad = TRUE, normalize = TRUE,
+  verbose = TRUE)
 }
 \arguments{
 \item{t1}{3D array or \code{nifti} image}
@@ -15,6 +16,12 @@ get_patches(t1, flair, mask, patchsize, verbose = TRUE)
 
 \item{patchsize}{Vector of length 2 (or more)}
 
+\item{pad}{Run \code{\link{pad_image}} on the image
+before getting patches (pads then normalizes if \code{normalize = TRUE})}
+
+\item{normalize}{Run \code{\link{normalize_image}} on the image
+before getting patches}
+
 \item{verbose}{print diagnostic messages}
 }
 \value{
@@ -22,4 +29,17 @@ A list of T1, FLAIR, and Mask Patches
 }
 \description{
 Get Patches from T1 and FLAIR image
+}
+\examples{
+library(neurobase)
+fname = system.file("extdata", "MPRAGE.nii.gz", package = "flexconn")
+t1 = readnii(fname)
+fname = system.file("extdata", "FLAIR.nii.gz", package = "flexconn")
+flair = readnii(fname)
+mask = t1 > 0
+patchsize = c(3, 3)
+verbose = TRUE
+patch = get_patches(t1, flair, mask, patchsize = patchsize)
+
+rm(patch)
 }
