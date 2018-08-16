@@ -192,6 +192,7 @@ history <- model %>% fit(
   validation_split = 0.3
 )
 
+# mod = keras::load_model_hdf5("~/Downloads/FLEXCONN1.1/Trained_models/21atlases/atlas_with_mask1/FLEXCONNmodel2D_35x35_17-10-2017_21-53-35.h5")
 plot(history, metrics = "loss")
 
 preds <-
