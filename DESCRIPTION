@@ -28,7 +28,8 @@ Suggests:
     covr,
     knitr,
     rmarkdown,
-    testthat
+    testthat,
+    tensorflow
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/muschellij2/flexconn

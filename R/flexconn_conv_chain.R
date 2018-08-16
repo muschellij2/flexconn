@@ -13,6 +13,7 @@
 #'
 #' @examples
 #' library(tensorflow)
+#' library(keras)
 #'  t1_input <- layer_input(shape = shape(NULL, NULL, 1))
 #'  t1 <- t1_input %>%
 #'  flexconn_conv_chain(
