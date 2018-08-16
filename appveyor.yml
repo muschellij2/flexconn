@@ -3,8 +3,25 @@ init:
     $ErrorActionPreference = "Stop"
     Invoke-WebRequest http://raw.github.com/krlmlr/r-appveyor/master/scripts/appveyor-tool.ps1 -OutFile "..\appveyor-tool.ps1"
     Import-Module '..\appveyor-tool.ps1'
+
+environment:
+  matrix:
+    - PYTHON_VERSION: 2.7
+      MINICONDA: C:\Miniconda
+    - PYTHON_VERSION: 3.4
+      MINICONDA: C:\Miniconda3
+
+init:
+  - "ECHO %PYTHON_VERSION% %MINICONDA%"
+
 install:
-  ps: Bootstrap
+  - ps: Bootstrap
+  - "set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%PATH%"
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  - conda info -a
+  - "conda create -q -n test-environment python=%PYTHON_VERSION% numpy scipy nose"
+
 cache: C:\RLibrary
 build_script: travis-tool.sh install_deps
 test_script: travis-tool.sh run_tests
