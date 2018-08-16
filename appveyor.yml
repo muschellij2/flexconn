@@ -11,10 +11,10 @@ environment:
     USE_RTOOLS: yes
     R_CHECK_INSTALL_ARGS: --install-args=--build --no-multiarch
   matrix:
-    - PYTHON_VERSION: 2.7-64
-      MINICONDA: C:\Miniconda-64
-    - PYTHON_VERSION: 3.4-64
-      MINICONDA: C:\Miniconda3-64
+    - PYTHON_VERSION: 2.7-x64
+      MINICONDA: C:\Miniconda-x64
+    - PYTHON_VERSION: 3.4-x64
+      MINICONDA: C:\Miniconda3-x64
 
 install:
   - ps: Bootstrap
