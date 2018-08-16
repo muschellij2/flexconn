@@ -47,6 +47,8 @@ verbose = TRUE
 patch = get_patch_from_volume(vol, mask, patchsize = patchsize,
 contrast = "T1")
 
+rm(patch)
+
 patch = get_patch_from_volume(vol, mask, patchsize = c(1,1,1),
 contrast = "T1")
 rm(patch)

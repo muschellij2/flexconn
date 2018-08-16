@@ -40,12 +40,12 @@ get_patches <- function(
   }
 
   t1_patches = get_patch_from_volume(t1, mask,
-                                     patchsize,
+                                     patchsize = patchsize,
                                      verbose = verbose,
                                      normalize = normalize,
                                      contrast = "T1")
   fl_patches = get_patch_from_volume(flair, mask,
-                                     patchsize,
+                                     patchsize = patchsize,
                                      verbose = verbose,
                                      normalize = normalize,
                                      contrast = "FLAIR")
@@ -81,6 +81,8 @@ get_patches <- function(
 #' verbose = TRUE
 #' patch = get_patch_from_volume(vol, mask, patchsize = patchsize,
 #' contrast = "T1")
+#'
+#' rm(patch)
 #'
 #' patch = get_patch_from_volume(vol, mask, patchsize = c(1,1,1),
 #' contrast = "T1")
