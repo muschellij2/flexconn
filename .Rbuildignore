@@ -7,3 +7,4 @@
 ^\.Rproj\.user$
 ^.*\.Rproj$
 flexconn.R$
+flexconn_wpackage.R$

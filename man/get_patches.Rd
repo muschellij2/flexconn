@@ -4,8 +4,8 @@
 \alias{get_patches}
 \title{Get Patches from T1 and FLAIR image}
 \usage{
-get_patches(t1, flair, mask, patchsize, pad = TRUE, normalize = TRUE,
-  verbose = TRUE)
+get_patches(t1, flair, mask = NULL, patchsize, pad = TRUE,
+  normalize = TRUE, verbose = TRUE, only_patches = TRUE)
 }
 \arguments{
 \item{t1}{3D array or \code{nifti} image}
@@ -29,6 +29,10 @@ A list of T1, FLAIR, and Mask Patches
 }
 \description{
 Get Patches from T1 and FLAIR image
+}
+\note{
+If \code{mask = NULL}, a mask will be created based on
+voxels greater than the 75th percentile of the FLAIR image.
 }
 \examples{
 library(neurobase)

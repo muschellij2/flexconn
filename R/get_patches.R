@@ -10,6 +10,9 @@
 #' @param normalize Run \code{\link{normalize_image}} on the image
 #' before getting patches
 #'
+#' @note If \code{mask = NULL}, a mask will be created based on
+#' voxels greater than the 75th percentile of the FLAIR image.
+#'
 #' @return A list of T1, FLAIR, and Mask Patches
 #' @export
 #'
@@ -27,32 +30,45 @@
 #'
 #' rm(patch)
 get_patches <- function(
-  t1, flair, mask, patchsize,
+  t1, flair, mask = NULL, patchsize,
   pad = TRUE,
   normalize = TRUE,
-  verbose = TRUE) {
+  verbose = TRUE,
+  only_patches = TRUE) {
 
-  if (pad) {
-    padsize = patchsize_to_padsize(patchsize)
-    t1 <- pad_image(t1, padsize = padsize)
-    flair <- pad_image(flair, padsize = padsize)
-    mask <- pad_image(mask, padsize = padsize)
+  if (is.null(mask)) {
+    flair = check_nifti(flair, allow.array = TRUE)
+    qflair = quantile(flair[ flair != 0], probs = 0.75)
+    mask = flair >= qflair
   }
 
-  t1_patches = get_patch_from_volume(t1, mask,
-                                     patchsize = patchsize,
-                                     verbose = verbose,
-                                     normalize = normalize,
-                                     contrast = "T1")
-  fl_patches = get_patch_from_volume(flair, mask,
-                                     patchsize = patchsize,
-                                     verbose = verbose,
-                                     normalize = normalize,
-                                     contrast = "FLAIR")
+  t1_patches = get_patch_from_volume(
+    t1, mask = mask,
+    patchsize = patchsize,
+    verbose = verbose,
+    normalize = normalize,
+    contrast = "T1",
+    pad = pad)
+  t1_patches = t1_patches$image_patches
+  fl_patches = get_patch_from_volume(
+    flair, mask = mask,
+    patchsize = patchsize,
+    verbose = verbose,
+    normalize = normalize,
+    contrast = "FLAIR",
+    pad = pad)
 
-  list(t1_patches$image_patches,
-       fl_patches$image_patches,
-       fl_patches$mask_patches)
+  L = list(t1_patches = t1_patches,
+       fl_patches = fl_patches$image_patches,
+       mask_patches = fl_patches$mask_patches
+       )
+  if (!only_patches) {
+       L$blurred_mask = fl_patches$blurred_mask
+       L$indices = fl_patches$indices
+       L$mask = mask
+       L$patchsize = patchsize
+  }
+  return(L)
 }
 
 #' Get Patches from 3D Volume
@@ -96,24 +112,39 @@ get_patch_from_volume <- function(
   func = switch(as.character(ndim),
                 "2" = get_2d_patch_from_volume,
                 "3" = get_3d_patch_from_volume)
+  if (is.null(func)) {
+    stop("Patch Size is not length 2 or 3!")
+  }
   args = list(...)
   args$patchsize = patchsize
   res = do.call(func, args = args)
-    return(res)
+  return(res)
 }
 
+#' @rdname get_patch_from_volume
+#' @export
+get_num_patches = function(mask) {
+  mask = check_nifti(mask, allow.array = TRUE)
+  num_patches = sum(mask != 0)
+  return(num_patches)
+}
 
 #' @rdname get_patch_from_volume
 #' @export
 get_2d_patch_from_volume <- function(
-  vol, mask, patchsize, verbose = TRUE,
+  vol, mask = NULL, patchsize, verbose = TRUE,
+  pad = TRUE,
   normalize = TRUE, contrast) {
 
-  vol = check_nifti(vol, allow.array = TRUE)
-  if (normalize) {
-    vol = normalize_image(vol = vol, contrast = contrast, verbose = verbose)
-  }
-  mask = check_nifti(mask, allow.array = TRUE)
+  res = norm_pad(
+    vol = vol, mask = mask,
+    patchsize = patchsize,
+    verbose = verbose,
+    pad = pad,
+    normalize = normalize, contrast = contrast)
+  mask = res$mask
+  vol = res$vol
+
   num_patches = sum(mask != 0)
 
   bmask = blur_mask(mask, verbose = verbose)
@@ -136,20 +167,28 @@ get_2d_patch_from_volume <- function(
     mask_patches[i, , , 1] <-
       blurmask[(x - dsize[1]):(x + dsize[1]), (y - dsize[2]):(y + dsize[2]), z]
   }
-  list(image_patches = t1_patches, mask_patches = mask_patches)
+  list(image_patches = t1_patches, mask_patches = mask_patches,
+       blurred_mask = blurmask,
+       indices = newindx,
+       padded_mask = mask)
 }
 
 #' @rdname get_patch_from_volume
 #' @export
 get_3d_patch_from_volume <- function(
-  vol, mask, patchsize, verbose = TRUE,
+  vol, mask = NULL, patchsize, verbose = TRUE,
+  pad = TRUE,
   normalize = TRUE, contrast) {
 
-  vol = check_nifti(vol, allow.array = TRUE)
-  if (normalize) {
-    vol = normalize_image(vol = vol, contrast = contrast, verbose = verbose)
-  }
-  mask = check_nifti(mask, allow.array = TRUE)
+  res = norm_pad(
+    vol = vol, mask = mask,
+    patchsize = patchsize,
+    verbose = verbose,
+    pad = pad,
+    normalize = normalize, contrast = contrast)
+  mask = res$mask
+  vol = res$vol
+
   num_patches = sum(mask != 0)
 
   bmask = blur_mask(mask, verbose = verbose)
@@ -179,5 +218,32 @@ get_3d_patch_from_volume <- function(
         (z - dsize[3]):(z + dsize[3])
         ]
   }
-  list(image_patches = t1_patches, mask_patches = mask_patches)
+  list(image_patches = t1_patches, mask_patches = mask_patches,
+       blurred_mask = blurmask,
+       indices = newindx,
+       padded_mask = mask)
+}
+
+
+
+#' @rdname get_patch_from_volume
+#' @export
+norm_pad = function(
+  vol, mask = NULL, patchsize, verbose = TRUE,
+  pad = TRUE,
+  normalize = TRUE, contrast) {
+  vol = check_nifti(vol, allow.array = TRUE)
+  if (normalize) {
+    vol = normalize_image(vol = vol, contrast = contrast, verbose = verbose)
+  }
+  if (is.null(mask)) {
+    mask = vol != 0
+  }
+  mask = check_nifti(mask, allow.array = TRUE)
+  if (pad) {
+    padsize = patchsize_to_padsize(patchsize)
+    vol <- pad_image(vol, padsize = padsize)
+    mask <- pad_image(mask, padsize = padsize)
+  }
+  return(list(vol = vol, mask = mask))
 }

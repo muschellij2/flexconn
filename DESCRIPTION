@@ -1,7 +1,7 @@
 Type: Package
 Package: flexconn
 Title: FLEXCONN Model
-Version: 0.1.1
+Version: 0.2.2
 Authors@R: 
     c(person(given = "John",
            family = "Muschelli",
@@ -19,6 +19,7 @@ Description: FLEXCONN model for multiple sclerosis lesion segmentation
 License: GPL-3
 Imports:
     keras,
+    tensorflow,
     neurobase,
     KernSmooth,
     reticulate,
@@ -28,8 +29,7 @@ Suggests:
     covr,
     knitr,
     rmarkdown,
-    testthat,
-    tensorflow
+    testthat
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/muschellij2/flexconn
