@@ -9,6 +9,7 @@
 #' before getting patches (pads then normalizes if \code{normalize = TRUE})
 #' @param normalize Run \code{\link{normalize_image}} on the image
 #' before getting patches
+#' @param only_patches Only return the patches, not additional information.
 #'
 #' @note If \code{mask = NULL}, a mask will be created based on
 #' voxels greater than the 75th percentile of the FLAIR image.
@@ -81,6 +82,8 @@ get_patches <- function(
 #' before getting patches
 #' @param contrast What imaging sequence of MRI is this volume, passed
 #' to \code{\link{normalize_image}}
+#' @param pad Run \code{\link{pad_image}} on the image
+#' before getting patches (pads then normalizes if \code{normalize = TRUE})
 #' @param ... not used
 #'
 #' @return A list of image and mask Patches

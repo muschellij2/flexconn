@@ -23,6 +23,8 @@ before getting patches (pads then normalizes if \code{normalize = TRUE})}
 before getting patches}
 
 \item{verbose}{print diagnostic messages}
+
+\item{only_patches}{Only return the patches, not additional information.}
 }
 \value{
 A list of T1, FLAIR, and Mask Patches

@@ -32,6 +32,9 @@ norm_pad(vol, mask = NULL, patchsize, verbose = TRUE, pad = TRUE,
 
 \item{verbose}{print diagnostic messages}
 
+\item{pad}{Run \code{\link{pad_image}} on the image
+before getting patches (pads then normalizes if \code{normalize = TRUE})}
+
 \item{normalize}{Run \code{\link{normalize_image}} on the image
 before getting patches}
 

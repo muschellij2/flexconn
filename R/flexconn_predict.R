@@ -18,7 +18,7 @@
 #' mask
 #' @export
 #'
-#' @examples
+#' @importFrom stats predict
 flexconn_predict = function(
   model, t1, flair, mask = NULL,
   patchsize, verbose = TRUE, ..., batch_size = 1) {
