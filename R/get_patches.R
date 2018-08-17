@@ -63,7 +63,7 @@ get_patches <- function(
     t1_patches = t1_patches,
     fl_patches = fl_patches$image_patches,
     mask_patches = fl_patches$mask_patches
-    )
+  )
   if (!only_patches) {
     L$blurred_mask = fl_patches$blurred_mask
     L$indices = fl_patches$indices
@@ -132,9 +132,6 @@ get_patch_from_volume <- function(
   blurmask = bmask$blurred_mask
   indices = bmask$indices
   dsize <- floor(patchsize / 2)
-
-  t1_patches <- array(0, dim = matsize)
-  mask_patches <- array(0, dim = matsize)
 
   t1_patches = volume_to_patches(vol = vol,
                                  indices = indices,
@@ -213,10 +210,11 @@ get_mask_patches = function(mask, patchsize, pad = TRUE, verbose = TRUE) {
   blurmask = bmask$blurred_mask
   indices = bmask$indices
 
-  mask_patches = volume_to_patches(vol = blurmask,
-                                   indices = indices,
-                                   patchsize = patchsize,
-                                   verbose = verbose)
+  mask_patches = volume_to_patches(
+    vol = blurmask,
+    indices = indices,
+    patchsize = patchsize,
+    verbose = verbose)
 
 
   list(mask_patches = mask_patches,
