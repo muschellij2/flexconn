@@ -59,15 +59,16 @@ get_patches <- function(
     contrast = "FLAIR",
     pad = pad)
 
-  L = list(t1_patches = t1_patches,
-       fl_patches = fl_patches$image_patches,
-       mask_patches = fl_patches$mask_patches
-       )
+  L = list(
+    t1_patches = t1_patches,
+    fl_patches = fl_patches$image_patches,
+    mask_patches = fl_patches$mask_patches
+    )
   if (!only_patches) {
-       L$blurred_mask = fl_patches$blurred_mask
-       L$indices = fl_patches$indices
-       L$mask = mask
-       L$patchsize = patchsize
+    L$blurred_mask = fl_patches$blurred_mask
+    L$indices = fl_patches$indices
+    L$mask = mask
+    L$patchsize = patchsize
   }
   return(L)
 }
@@ -106,23 +107,54 @@ get_patches <- function(
 #' patch = get_patch_from_volume(vol, mask, patchsize = c(1,1,1),
 #' contrast = "T1")
 #' rm(patch)
-#'
 get_patch_from_volume <- function(
-  ..., patchsize) {
+  vol, mask = NULL, patchsize, verbose = TRUE,
+  pad = TRUE,
+  normalize = TRUE, contrast) {
 
   ndim = length(patchsize)
-
-  func = switch(as.character(ndim),
-                "2" = get_2d_patch_from_volume,
-                "3" = get_3d_patch_from_volume)
-  if (is.null(func)) {
+  if (!ndim %in% c(2, 3)) {
     stop("Patch Size is not length 2 or 3!")
   }
-  args = list(...)
-  args$patchsize = patchsize
-  res = do.call(func, args = args)
-  return(res)
+
+  res = norm_pad(
+    vol = vol, mask = mask,
+    patchsize = patchsize,
+    verbose = verbose,
+    pad = pad,
+    normalize = normalize, contrast = contrast)
+  mask = res$mask
+  vol = res$vol
+
+  num_patches = get_num_patches(mask)
+
+  bmask = blur_mask(mask, verbose = verbose)
+  blurmask = bmask$blurred_mask
+  indices = bmask$indices
+  dsize <- floor(patchsize / 2)
+
+  t1_patches <- array(0, dim = matsize)
+  mask_patches <- array(0, dim = matsize)
+
+  t1_patches = volume_to_patches(vol = vol,
+                                 indices = indices,
+                                 patchsize = patchsize,
+                                 verbose = verbose)
+
+  mask_patches = volume_to_patches(vol = blurmask,
+                                   indices = indices,
+                                   patchsize = patchsize,
+                                   verbose = verbose)
+
+  list(image_patches = t1_patches, mask_patches = mask_patches,
+       blurred_mask = blurmask,
+       indices = indices,
+       padded_mask = mask,
+       padded_vol = vol)
 }
+
+
+
 
 #' @rdname get_patch_from_volume
 #' @export
@@ -132,109 +164,18 @@ get_num_patches = function(mask) {
   return(num_patches)
 }
 
-#' @rdname get_patch_from_volume
-#' @export
-get_2d_patch_from_volume <- function(
-  vol, mask = NULL, patchsize, verbose = TRUE,
-  pad = TRUE,
-  normalize = TRUE, contrast) {
-
-  res = norm_pad(
-    vol = vol, mask = mask,
-    patchsize = patchsize,
-    verbose = verbose,
-    pad = pad,
-    normalize = normalize, contrast = contrast)
-  mask = res$mask
-  vol = res$vol
-
-  num_patches = sum(mask != 0)
-
-  bmask = blur_mask(mask, verbose = verbose)
-  blurmask = bmask$blurred_mask
-  newindx = bmask$indices
-  dsize <- floor(patchsize / 2)
-
-  matsize = get_matsize(num_patches, patchsize = patchsize)
-  if (verbose) {
-    message("Size matrix to create: ", paste(matsize, collapse = "x"))
-  }
-  t1_patches <- array(0, dim = matsize)
-  mask_patches <- array(0, dim = matsize)
-  for (i in 1:num_patches) {
-    x <- newindx[1, i]
-    y <- newindx[2, i]
-    z <- newindx[3, i]
-    t1_patches[i, , , 1] <-
-      vol[(x - dsize[1]):(x + dsize[1]), (y - dsize[2]):(y + dsize[2]), z]
-    mask_patches[i, , , 1] <-
-      blurmask[(x - dsize[1]):(x + dsize[1]), (y - dsize[2]):(y + dsize[2]), z]
-  }
-  list(image_patches = t1_patches, mask_patches = mask_patches,
-       blurred_mask = blurmask,
-       indices = newindx,
-       padded_mask = mask)
-}
-
-#' @rdname get_patch_from_volume
-#' @export
-get_3d_patch_from_volume <- function(
-  vol, mask = NULL, patchsize, verbose = TRUE,
-  pad = TRUE,
-  normalize = TRUE, contrast) {
-
-  res = norm_pad(
-    vol = vol, mask = mask,
-    patchsize = patchsize,
-    verbose = verbose,
-    pad = pad,
-    normalize = normalize, contrast = contrast)
-  mask = res$mask
-  vol = res$vol
-
-  num_patches = sum(mask != 0)
-
-  bmask = blur_mask(mask, verbose = verbose)
-  blurmask = bmask$blurred_mask
-  newindx = bmask$indices
-  dsize <- floor(patchsize / 2)
-
-  matsize = get_matsize(num_patches, patchsize = patchsize)
-  if (verbose) {
-    message("Size matrix to create: ", paste(matsize, collapse = "x"))
-  }
-  t1_patches <- array(0, dim = matsize)
-  mask_patches <- array(0, dim = matsize)
-  for (i in 1:num_patches) {
-    x <- newindx[1, i]
-    y <- newindx[2, i]
-    z <- newindx[3, i]
-    t1_patches[i, , , , 1] <-
-      vol[(x - dsize[1]):(x + dsize[1]),
-          (y - dsize[2]):(y + dsize[2]),
-          (z - dsize[3]):(z + dsize[3])
-          ]
-    mask_patches[i, , , , 1] <-
-      blurmask[
-        (x - dsize[1]):(x + dsize[1]),
-        (y - dsize[2]):(y + dsize[2]),
-        (z - dsize[3]):(z + dsize[3])
-        ]
-  }
-  list(image_patches = t1_patches, mask_patches = mask_patches,
-       blurred_mask = blurmask,
-       indices = newindx,
-       padded_mask = mask)
-}
-
 
 
 #' @rdname get_patch_from_volume
 #' @export
 norm_pad = function(
-  vol, mask = NULL, patchsize, verbose = TRUE,
+  vol,
+  mask = NULL,
+  patchsize,
+  verbose = TRUE,
   pad = TRUE,
-  normalize = TRUE, contrast) {
+  normalize = TRUE,
+  contrast) {
   vol = check_nifti(vol, allow.array = TRUE)
   if (normalize) {
     vol = normalize_image(vol = vol, contrast = contrast, verbose = verbose)
@@ -249,4 +190,37 @@ norm_pad = function(
     mask <- pad_image(mask, padsize = padsize)
   }
   return(list(vol = vol, mask = mask))
+}
+
+
+#' @rdname get_patch_from_volume
+#' @export
+get_mask_patches = function(mask, patchsize, pad = TRUE, verbose = TRUE) {
+
+  ndim = length(patchsize)
+  if (!ndim %in% c(2, 3)) {
+    stop("Patch Size is not length 2 or 3!")
+  }
+
+  mask = check_nifti(mask, allow.array = TRUE)
+  if (pad) {
+    padsize = patchsize_to_padsize(patchsize)
+    mask <- pad_image(mask, padsize = padsize)
+  }
+  num_patches = get_num_patches(mask)
+
+  bmask = blur_mask(mask, verbose = verbose)
+  blurmask = bmask$blurred_mask
+  indices = bmask$indices
+
+  mask_patches = volume_to_patches(vol = blurmask,
+                                   indices = indices,
+                                   patchsize = patchsize,
+                                   verbose = verbose)
+
+
+  list(mask_patches = mask_patches,
+       blurred_mask = blurmask,
+       indices = indices,
+       padded_mask = mask)
 }
