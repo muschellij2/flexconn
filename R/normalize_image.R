@@ -40,13 +40,13 @@ image_peak <- function(vol,
   bw <- q / 80
   gridsize <- 128 ## scipy rounds up from 80 to 128
   if (verbose) {
-    message(paste("99th quantile is",
-                   q,
+    message(paste0("99th quantile is ",
+                   round(q, 3),
                    ", bandwidth =",
-                   bw,
+                   round(bw, 3),
                    ", gridsize =",
-                   gridsize,
-                   "\n"))
+                   round(gridsize, 3)
+    ))
   }
   kde <- KernSmooth::bkde(temp, bandwidth = bw, gridsize = gridsize)
   x <- kde$y
@@ -55,7 +55,7 @@ image_peak <- function(vol,
   heights <- x[indx]
   peaks <- y[indx]
   if (verbose) {
-    message(paste(length(peaks), " peaks found.", "\n"))
+    message(paste0(length(peaks), " peaks found.", "\n"))
   }
   if (contrast == "T1") {
     peak <- peaks[length(peaks)]
@@ -64,7 +64,7 @@ image_peak <- function(vol,
     peak <- peaks[which.max(heights)]
   }
   if (verbose) {
-    message(paste("Peak found at", peak, "for", contrast, "\n"))
+    message(paste("Peak found at", peak, "for", contrast))
   }
   peak
 }
