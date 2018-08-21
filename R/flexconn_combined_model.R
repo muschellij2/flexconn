@@ -39,7 +39,8 @@ flexconn_model = function(
       num_filters = num_filters,
       kernel_size_1 = kernel_size_1,
       kernel_size_2 = kernel_size_2,
-      prefix = "t1"
+      prefix = "t1",
+      ndim = ndim
     )
 
   fl_input <- layer_input(shape = shaper)
@@ -49,7 +50,8 @@ flexconn_model = function(
       num_filters = num_filters,
       kernel_size_1 = kernel_size_1,
       kernel_size_2 = kernel_size_2,
-      prefix = "fl"
+      prefix = "fl",
+      ndim = ndim
     )
 
   concat <- layer_concatenate(list(t1, fl), axis = -1)
@@ -60,7 +62,8 @@ flexconn_model = function(
       num_filters = num_filters,
       kernel_size_1 = kernel_size_1,
       kernel_size_2 = kernel_size_2,
-      prefix = "combined"
+      prefix = "combined",
+      ndim = ndim
     ) %>%
     func(
       filters = 1,

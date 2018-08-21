@@ -36,7 +36,12 @@ flexconn_conv_chain <- function(
   ndim ) {
 
   if (missing(ndim)) {
-    ndim = object$shape$ndims - 2
+    ndim = try({
+      object$shape$ndims - 2
+    })
+    if (inherits(ndim, "try-error")) {
+      stop("ndim must be specified as endpoint for object not correct")
+    }
   }
 
   ndim = ndim[1]
