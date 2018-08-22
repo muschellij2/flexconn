@@ -4,13 +4,15 @@
 \alias{get_patches}
 \title{Get Patches from T1 and FLAIR image}
 \usage{
-get_patches(t1, flair, mask = NULL, patchsize, pad = TRUE,
+get_patches(t1, flair, t2 = NULL, mask = NULL, patchsize, pad = TRUE,
   normalize = TRUE, verbose = TRUE, only_patches = TRUE)
 }
 \arguments{
 \item{t1}{3D array or \code{nifti} image}
 
 \item{flair}{3D array or \code{nifti} image}
+
+\item{t2}{3D array or \code{nifti} image}
 
 \item{mask}{binary 3D array or \code{nifti} image}
 

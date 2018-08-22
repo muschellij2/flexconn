@@ -5,6 +5,7 @@
 #' @param num_filters Nubmer of filters
 #' @param kernel_size_1 Size of first kernel
 #' @param kernel_size_2 Size of second kernel
+#' @param prefixes The prefixes for each of the layers of the model.
 #'
 #' @return A keras model object
 #' @export
@@ -12,7 +13,9 @@
 #' @importFrom keras layer_concatenate layer_input keras_model
 #' @examples
 #' res = flexconn_model()
+#' res = flexconn_model(prefixes = c("t1", "fl", "t2"))
 flexconn_model = function(
+  prefixes = c("t1", "fl"),
   ndim = 2,
   ds = 2,
   num_filters = 128,
@@ -32,29 +35,48 @@ flexconn_model = function(
     stop(paste0("ndim, number of dimensions: ", ndim, "not supported"))
   }
 
-  t1_input <- layer_input(shape = shaper)
-  t1 <- t1_input %>%
-    flexconn_conv_chain(
-      ds = ds,
-      num_filters = num_filters,
-      kernel_size_1 = kernel_size_1,
-      kernel_size_2 = kernel_size_2,
-      prefix = "t1",
-      ndim = ndim
-    )
+  outs = lapply(prefixes, function(prefix) {
+    t1_input <- layer_input(shape = shaper)
+    t1 <- t1_input %>%
+      flexconn_conv_chain(
+        ds = ds,
+        num_filters = num_filters,
+        kernel_size_1 = kernel_size_1,
+        kernel_size_2 = kernel_size_2,
+        prefix = prefix,
+        ndim = ndim
+      )
+    return(list(input = t1_input, mod = t1))
+  })
 
-  fl_input <- layer_input(shape = shaper)
-  fl <- fl_input %>%
-    flexconn_conv_chain(
-      ds = ds,
-      num_filters = num_filters,
-      kernel_size_1 = kernel_size_1,
-      kernel_size_2 = kernel_size_2,
-      prefix = "fl",
-      ndim = ndim
-    )
+  # t1_input <- layer_input(shape = shaper)
+  # t1 <- t1_input %>%
+  #   flexconn_conv_chain(
+  #     ds = ds,
+  #     num_filters = num_filters,
+  #     kernel_size_1 = kernel_size_1,
+  #     kernel_size_2 = kernel_size_2,
+  #     prefix = "t1",
+  #     ndim = ndim
+  #   )
+  #
+  # fl_input <- layer_input(shape = shaper)
+  # fl <- fl_input %>%
+  #   flexconn_conv_chain(
+  #     ds = ds,
+  #     num_filters = num_filters,
+  #     kernel_size_1 = kernel_size_1,
+  #     kernel_size_2 = kernel_size_2,
+  #     prefix = "fl",
+  #     ndim = ndim
+  #   )
+  # concat <- layer_concatenate(list(t1, fl), axis = -1)
 
-  concat <- layer_concatenate(list(t1, fl), axis = -1)
+  cat_list = lapply(outs, function(x) {
+    x$mod
+  })
+
+  concat <- layer_concatenate(cat_list, axis = -1)
 
   combined <- concat %>%
     flexconn_conv_chain(
@@ -72,6 +94,10 @@ flexconn_model = function(
       padding = "same",
       name = "conv_final"
     )
-  model <- keras_model(inputs = list(t1_input, fl_input), outputs = combined)
+  # inputs = list(t1_input, fl_input)
+  inputs = lapply(outs, function(x) {
+    x$input
+  })
+  model <- keras_model(inputs = inputs, outputs = combined)
   return(model)
 }

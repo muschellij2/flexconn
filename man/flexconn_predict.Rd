@@ -4,7 +4,7 @@
 \alias{flexconn_predict}
 \title{Predict from FLEXCONN model}
 \usage{
-flexconn_predict(model, t1, flair, mask = NULL, patchsize,
+flexconn_predict(model, t1, flair, t2 = NULL, mask = NULL, patchsize,
   verbose = TRUE, ..., batch_size = 1)
 }
 \arguments{

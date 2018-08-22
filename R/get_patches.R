@@ -2,6 +2,7 @@
 #'
 #' @param t1 3D array or \code{nifti} image
 #' @param flair 3D array or \code{nifti} image
+#' @param t2 3D array or \code{nifti} image
 #' @param mask binary 3D array or \code{nifti} image
 #' @param patchsize Vector of length 2 (or more)
 #' @param verbose print diagnostic messages
@@ -31,7 +32,7 @@
 #'
 #' rm(patch)
 get_patches <- function(
-  t1, flair, mask = NULL, patchsize,
+  t1, flair, t2 = NULL, mask = NULL, patchsize,
   pad = TRUE,
   normalize = TRUE,
   verbose = TRUE,
@@ -59,11 +60,23 @@ get_patches <- function(
     contrast = "FLAIR",
     pad = pad)
 
+  t2_patches = NULL
+  if (!is.null(t2)) {
+    t2_patches = get_patch_from_volume(
+      t2, mask = mask,
+      patchsize = patchsize,
+      verbose = verbose,
+      normalize = normalize,
+      contrast = "T2",
+      pad = pad)
+  }
   L = list(
     t1_patches = t1_patches,
     fl_patches = fl_patches$image_patches,
     mask_patches = fl_patches$mask_patches
   )
+  L$t2_patches = t2_patches
+
   if (!only_patches) {
     L$blurred_mask = fl_patches$blurred_mask
     L$indices = fl_patches$indices
@@ -126,22 +139,24 @@ get_patch_from_volume <- function(
   mask = res$mask
   vol = res$vol
 
-  num_patches = get_num_patches(mask)
+  # num_patches = get_num_patches(mask)
 
   bmask = blur_mask(mask, verbose = verbose)
   blurmask = bmask$blurred_mask
   indices = bmask$indices
-  dsize <- floor(patchsize / 2)
+  # dsize <- floor(patchsize / 2)
 
-  t1_patches = volume_to_patches(vol = vol,
-                                 indices = indices,
-                                 patchsize = patchsize,
-                                 verbose = verbose)
+  t1_patches = volume_to_patches(
+    vol = vol,
+    indices = indices,
+    patchsize = patchsize,
+    verbose = verbose)
 
-  mask_patches = volume_to_patches(vol = blurmask,
-                                   indices = indices,
-                                   patchsize = patchsize,
-                                   verbose = verbose)
+  mask_patches = volume_to_patches(
+    vol = blurmask,
+    indices = indices,
+    patchsize = patchsize,
+    verbose = verbose)
 
   list(image_patches = t1_patches, mask_patches = mask_patches,
        blurred_mask = blurmask,
@@ -204,7 +219,7 @@ get_mask_patches = function(mask, patchsize, pad = TRUE, verbose = TRUE) {
     padsize = patchsize_to_padsize(patchsize)
     mask <- pad_image(mask, padsize = padsize)
   }
-  num_patches = get_num_patches(mask)
+  # num_patches = get_num_patches(mask)
 
   bmask = blur_mask(mask, verbose = verbose)
   blurmask = bmask$blurred_mask

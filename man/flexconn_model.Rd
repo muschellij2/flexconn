@@ -4,10 +4,12 @@
 \alias{flexconn_model}
 \title{FLEXCONN Model}
 \usage{
-flexconn_model(ndim = 2, ds = 2, num_filters = 128,
-  kernel_size_1 = 3, kernel_size_2 = 5)
+flexconn_model(prefixes = c("t1", "fl"), ndim = 2, ds = 2,
+  num_filters = 128, kernel_size_1 = 3, kernel_size_2 = 5)
 }
 \arguments{
+\item{prefixes}{The prefixes for each of the layers of the model.}
+
 \item{ndim}{Number of dimensions for convolution chain (2 or 3)}
 
 \item{ds}{Some fixed number???}
@@ -26,4 +28,5 @@ FLEXCONN Model
 }
 \examples{
 res = flexconn_model()
+res = flexconn_model(prefixes = c("t1", "fl", "t2"))
 }

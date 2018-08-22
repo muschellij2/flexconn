@@ -20,19 +20,24 @@
 #'
 #' @importFrom stats predict
 flexconn_predict = function(
-  model, t1, flair, mask = NULL,
+  model, t1, flair, t2 = NULL,
+  mask = NULL,
   patchsize, verbose = TRUE, ..., batch_size = 1) {
 
   patches = get_patches(
-    t1 = t1, flair = flair, patchsize = patchsize,
+    t1 = t1, flair = flair,
+    t2 = t2, patchsize = patchsize,
     mask = mask,
     ...)
   t1_test <- patches$t1_patches
   fl_test <- patches$fl_patches
+  t2_test <- patches$t2_patches
 
-  preds <- model %>% predict(
-    list(t1_test,
-         fl_test),
+  L =     list(t1_test,
+               fl_test)
+  L$t2_test = t2_test
+
+  preds <- model %>% predict(L,
     verbose = verbose,
     batch_size = batch_size)
   return(preds)
