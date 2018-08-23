@@ -1,4 +1,4 @@
-#' Volume to Patches
+#' Convert Volume to Patches
 #'
 #' @param vol 3D array or \code{nifti} image
 #' @param patchsize Vector of length 2 (or more)
@@ -6,7 +6,7 @@
 #' data to extract
 #' @param verbose print diagnostic messages
 #'
-#' @return A list of image and mask Patches
+#' @return A matrix of patches
 #' @export
 volume_to_patches = function(
   vol, indices, patchsize,

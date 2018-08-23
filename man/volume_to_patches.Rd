@@ -2,7 +2,7 @@
 % Please edit documentation in R/volume_to_patches.R
 \name{volume_to_patches}
 \alias{volume_to_patches}
-\title{Volume to Patches}
+\title{Convert Volume to Patches}
 \usage{
 volume_to_patches(vol, indices, patchsize, verbose = TRUE)
 }
@@ -17,8 +17,8 @@ data to extract}
 \item{verbose}{print diagnostic messages}
 }
 \value{
-A list of image and mask Patches
+A matrix of patches
 }
 \description{
-Volume to Patches
+Convert Volume to Patches
 }

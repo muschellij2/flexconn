@@ -15,8 +15,10 @@
 mask_indices = function(mask, seed = NULL, verbose = TRUE) {
   mask = check_nifti(mask, allow.array = TRUE)
 
+  dmask = dim(mask)
   indx <- which(mask != 0, arr.ind = TRUE)
   indx = t(indx)
+  attr(indx, "original_dimension") = dmask
   if (is.null(seed)) {
     return(indx)
   }
@@ -33,5 +35,6 @@ mask_indices = function(mask, seed = NULL, verbose = TRUE) {
       newindx[j, i] <- indx[j, randindx[i]]
     }
   }
+  attr(newindx, "original_dimension") = dmask
   return(newindx)
 }
