@@ -5,7 +5,8 @@
 \title{Get Patches from T1 and FLAIR image}
 \usage{
 get_patches(t1, flair, t2 = NULL, mask = NULL, patchsize, pad = TRUE,
-  normalize = TRUE, verbose = TRUE, only_patches = TRUE)
+  normalize = TRUE, verbose = TRUE, only_patches = TRUE,
+  seed = NULL)
 }
 \arguments{
 \item{t1}{3D array or \code{nifti} image}
@@ -27,6 +28,9 @@ before getting patches}
 \item{verbose}{print diagnostic messages}
 
 \item{only_patches}{Only return the patches, not additional information.}
+
+\item{seed}{Seed for random sampling of indices.  If \code{NULL},
+no sampling is done, passed to \code{\link{mask_indices}}}
 }
 \value{
 A list of T1, FLAIR, and Mask Patches

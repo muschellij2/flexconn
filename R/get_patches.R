@@ -11,6 +11,8 @@
 #' @param normalize Run \code{\link{normalize_image}} on the image
 #' before getting patches
 #' @param only_patches Only return the patches, not additional information.
+#' @param seed Seed for random sampling of indices.  If \code{NULL},
+#' no sampling is done, passed to \code{\link{mask_indices}}
 #'
 #' @note If \code{mask = NULL}, a mask will be created based on
 #' voxels greater than the 75th percentile of the FLAIR image.
@@ -36,7 +38,8 @@ get_patches <- function(
   pad = TRUE,
   normalize = TRUE,
   verbose = TRUE,
-  only_patches = TRUE) {
+  only_patches = TRUE,
+  seed = NULL) {
 
   if (is.null(mask)) {
     flair = check_nifti(flair, allow.array = TRUE)
@@ -50,7 +53,8 @@ get_patches <- function(
     verbose = verbose,
     normalize = normalize,
     contrast = "T1",
-    pad = pad)
+    pad = pad,
+    seed = seed)
   t1_patches = t1_patches$image_patches
   fl_patches = get_patch_from_volume(
     flair, mask = mask,
@@ -58,7 +62,8 @@ get_patches <- function(
     verbose = verbose,
     normalize = normalize,
     contrast = "FLAIR",
-    pad = pad)
+    pad = pad,
+    seed = seed)
 
   t2_patches = NULL
   if (!is.null(t2)) {
@@ -68,7 +73,8 @@ get_patches <- function(
       verbose = verbose,
       normalize = normalize,
       contrast = "T2",
-      pad = pad)
+      pad = pad,
+      seed = seed)
   }
   L = list(
     t1_patches = t1_patches,
@@ -98,6 +104,9 @@ get_patches <- function(
 #' to \code{\link{normalize_image}}
 #' @param pad Run \code{\link{pad_image}} on the image
 #' before getting patches (pads then normalizes if \code{normalize = TRUE})
+#' @param seed Seed for random sampling of indices.  If \code{NULL},
+#' no sampling is done, passed to \code{\link{mask_indices}}
+#'
 #' @param ... not used
 #'
 #' @return A list of image and mask Patches
@@ -123,7 +132,8 @@ get_patches <- function(
 get_patch_from_volume <- function(
   vol, mask = NULL, patchsize, verbose = TRUE,
   pad = TRUE,
-  normalize = TRUE, contrast) {
+  normalize = TRUE, contrast,
+  seed = NULL) {
 
   ndim = length(patchsize)
   if (!ndim %in% c(2, 3)) {
@@ -141,9 +151,11 @@ get_patch_from_volume <- function(
 
   # num_patches = get_num_patches(mask)
 
-  bmask = blur_mask(mask, verbose = verbose)
-  blurmask = bmask$blurred_mask
-  indices = bmask$indices
+  blurmask = blur_mask(mask)
+
+  indices = mask_indices(mask, seed = seed, verbose = verbose)
+  # blurmask = bmask$blurred_mask
+  # indices = bmask$indices
   # dsize <- floor(patchsize / 2)
 
   t1_patches = volume_to_patches(
@@ -207,7 +219,9 @@ norm_pad = function(
 
 #' @rdname get_patch_from_volume
 #' @export
-get_mask_patches = function(mask, patchsize, pad = TRUE, verbose = TRUE) {
+get_mask_patches = function(mask, patchsize,
+                            pad = TRUE, seed = NULL,
+                            verbose = TRUE) {
 
   ndim = length(patchsize)
   if (!ndim %in% c(2, 3)) {
@@ -221,9 +235,8 @@ get_mask_patches = function(mask, patchsize, pad = TRUE, verbose = TRUE) {
   }
   # num_patches = get_num_patches(mask)
 
-  bmask = blur_mask(mask, verbose = verbose)
-  blurmask = bmask$blurred_mask
-  indices = bmask$indices
+  blurmask = blur_mask(mask)
+  indices = mask_indices(mask, seed = seed, verbose = verbose)
 
   mask_patches = volume_to_patches(
     vol = blurmask,

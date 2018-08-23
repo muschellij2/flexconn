@@ -4,7 +4,7 @@
 \alias{blur_mask}
 \title{Blur Mask and Get Indices for Patches}
 \usage{
-blur_mask(mask, verbose = TRUE)
+blur_mask(mask)
 }
 \arguments{
 \item{mask}{binary 3D array or \code{nifti} image}
@@ -12,7 +12,7 @@ blur_mask(mask, verbose = TRUE)
 \item{verbose}{print diagnostic messages}
 }
 \value{
-A list of indices and the blurred mask
+The blurred mask
 }
 \description{
 Blur Mask and Get Indices for Patches

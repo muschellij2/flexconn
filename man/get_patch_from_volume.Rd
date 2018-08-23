@@ -8,14 +8,15 @@
 \title{Get Patches from 3D Volume}
 \usage{
 get_patch_from_volume(vol, mask = NULL, patchsize, verbose = TRUE,
-  pad = TRUE, normalize = TRUE, contrast)
+  pad = TRUE, normalize = TRUE, contrast, seed = NULL)
 
 get_num_patches(mask)
 
 norm_pad(vol, mask = NULL, patchsize, verbose = TRUE, pad = TRUE,
   normalize = TRUE, contrast)
 
-get_mask_patches(mask, patchsize, pad = TRUE, verbose = TRUE)
+get_mask_patches(mask, patchsize, pad = TRUE, seed = NULL,
+  verbose = TRUE)
 }
 \arguments{
 \item{vol}{3D array or \code{nifti} image}
@@ -34,6 +35,9 @@ before getting patches}
 
 \item{contrast}{What imaging sequence of MRI is this volume, passed
 to \code{\link{normalize_image}}}
+
+\item{seed}{Seed for random sampling of indices.  If \code{NULL},
+no sampling is done, passed to \code{\link{mask_indices}}}
 
 \item{...}{not used}
 }

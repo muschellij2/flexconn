@@ -1,0 +1,37 @@
+#' Get Mask Indices
+#'
+#' @param mask binary 3D array or \code{nifti} image
+#' @param seed Seed for random sampling of indices.  If \code{NULL},
+#' no sampling is done
+#' @param verbose print diagnostic messages
+#'
+#' @return A 3xV matrix with V number of patches
+#' @export
+#'
+#' @examples
+#' dims = rep(10,3)
+#' mask = array(rbinom(prod(dims), size = 1, prob = 0.2),
+#' dim = dims)
+mask_indices = function(mask, seed = NULL, verbose = TRUE) {
+  mask = check_nifti(mask, allow.array = TRUE)
+
+  indx <- which(mask != 0, arr.ind = TRUE)
+  indx = t(indx)
+  if (is.null(seed)) {
+    return(indx)
+  }
+  set.seed(seed)
+
+  num_patches <- ncol(indx)
+  if (verbose) {
+    message("Number of patches used: ", num_patches, "\n")
+  }
+  randindx <- sample(1:num_patches, num_patches, replace = FALSE)
+  newindx <- matrix(0, nrow = 3, ncol = num_patches)
+  for (i in 1:num_patches) {
+    for (j in 1:3) {
+      newindx[j, i] <- indx[j, randindx[i]]
+    }
+  }
+  return(newindx)
+}
