@@ -8,8 +8,6 @@ blur_mask(mask)
 }
 \arguments{
 \item{mask}{binary 3D array or \code{nifti} image}
-
-\item{verbose}{print diagnostic messages}
 }
 \value{
 The blurred mask

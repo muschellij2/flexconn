@@ -3,6 +3,8 @@
 #' @param model A keras model object trained
 #' @param t1 3D array or \code{nifti} image
 #' @param flair 3D array or \code{nifti} image
+#' @param t2 3D array or \code{nifti} image, optional if model has this
+#'
 #' @param mask binary 3D array or \code{nifti} image, but of
 #' the whole area of prediction, not the ground truth
 #' @param patchsize Vector of length 2 (or more)

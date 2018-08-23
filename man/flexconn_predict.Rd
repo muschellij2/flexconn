@@ -14,6 +14,8 @@ flexconn_predict(model, t1, flair, t2 = NULL, mask = NULL, patchsize,
 
 \item{flair}{3D array or \code{nifti} image}
 
+\item{t2}{3D array or \code{nifti} image, optional if model has this}
+
 \item{mask}{binary 3D array or \code{nifti} image, but of
 the whole area of prediction, not the ground truth}
 

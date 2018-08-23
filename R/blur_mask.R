@@ -1,7 +1,6 @@
 #' Blur Mask and Get Indices for Patches
 #'
 #' @param mask binary 3D array or \code{nifti} image
-#' @param verbose print diagnostic messages
 #'
 #' @return The blurred mask
 #' @export
