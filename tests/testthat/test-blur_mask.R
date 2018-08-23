@@ -8,6 +8,7 @@ mask = array(mask, dim = dims)
 
 test_that("Blurring gives list", {
   res = blur_mask(mask)
-  expect_equal(names(res), c("indices", "blurred_mask"))
-  expect_type(res, "list")
+  # expect_equal(names(res), c("indices", "blurred_mask"))
+  expect_equal(sum(res), 43549300.0063181)
+  expect_equal(class(res), "array")
 })

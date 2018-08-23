@@ -152,8 +152,8 @@ get_patch_from_volume <- function(
   # num_patches = get_num_patches(mask)
 
   blurmask = blur_mask(mask)
-
   indices = mask_indices(mask, seed = seed, verbose = verbose)
+
   # blurmask = bmask$blurred_mask
   # indices = bmask$indices
   # dsize <- floor(patchsize / 2)
