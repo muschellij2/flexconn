@@ -5,7 +5,7 @@
 \title{Get Patches from T1 and FLAIR image}
 \usage{
 get_patches(t1, flair, t2 = NULL, mask = NULL, patchsize, pad = TRUE,
-  normalize = TRUE, verbose = TRUE, only_patches = TRUE,
+  normalize = TRUE, verbose = TRUE, only_patches = FALSE,
   seed = NULL)
 }
 \arguments{
@@ -48,10 +48,9 @@ fname = system.file("extdata", "MPRAGE.nii.gz", package = "flexconn")
 t1 = readnii(fname)
 fname = system.file("extdata", "FLAIR.nii.gz", package = "flexconn")
 flair = readnii(fname)
-mask = t1 > 0
 patchsize = c(3, 3)
 verbose = TRUE
-patch = get_patches(t1, flair, mask, patchsize = patchsize)
+patch = get_patches(t1, flair, mask = NULL, patchsize = patchsize)
 
 rm(patch)
 }

@@ -2,13 +2,13 @@
 % Please edit documentation in R/patches_to_volume.R
 \name{patches_to_volume}
 \alias{patches_to_volume}
-\alias{get_volume_from_patch}
+\alias{get_volume_from_patches}
 \title{Convert Patches to a Volume}
 \usage{
 patches_to_volume(patches, indices, patchsize, verbose = TRUE,
   orig_dim = NULL)
 
-get_volume_from_patch(patches, indices, patchsize, verbose = TRUE,
+get_volume_from_patches(patches, indices, patchsize, verbose = TRUE,
   invert_pad = TRUE, orig_dim = NULL)
 }
 \arguments{
@@ -32,4 +32,26 @@ A 3D volume
 }
 \description{
 Convert Patches to a Volume
+}
+\examples{
+library(neurobase)
+fname = system.file("extdata", "MPRAGE.nii.gz", package = "flexconn")
+t1 = readnii(fname)
+fname = system.file("extdata", "FLAIR.nii.gz", package = "flexconn")
+flair = readnii(fname)
+patchsize = c(3, 3)
+verbose = TRUE
+patch = get_patches(t1, flair, mask = NULL, patchsize = patchsize,
+only_patches = FALSE, normalize = FALSE)
+out_mask = patch$mask
+masked_t1 = mask_img(t1, out_mask)
+t1_remade = get_volume_from_patches(patch$t1_patches,
+indices = patch$indices,
+patchsize = patchsize,
+invert_pad = patch$pad)
+stopifnot(all(dim(t1) == dim(t1_remade)))
+t1vals = mask_vals(t1, out_mask)
+t1_remade_vals = mask_vals(t1_remade, out_mask)
+testthat::expect_equal(t1vals, t1_remade_vals)
+
 }

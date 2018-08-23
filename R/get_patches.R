@@ -27,10 +27,9 @@
 #' t1 = readnii(fname)
 #' fname = system.file("extdata", "FLAIR.nii.gz", package = "flexconn")
 #' flair = readnii(fname)
-#' mask = t1 > 0
 #' patchsize = c(3, 3)
 #' verbose = TRUE
-#' patch = get_patches(t1, flair, mask, patchsize = patchsize)
+#' patch = get_patches(t1, flair, mask = NULL, patchsize = patchsize)
 #'
 #' rm(patch)
 get_patches <- function(
@@ -38,7 +37,7 @@ get_patches <- function(
   pad = TRUE,
   normalize = TRUE,
   verbose = TRUE,
-  only_patches = TRUE,
+  only_patches = FALSE,
   seed = NULL) {
 
   if (is.null(mask)) {
@@ -88,6 +87,7 @@ get_patches <- function(
     L$indices = fl_patches$indices
     L$mask = mask
     L$patchsize = patchsize
+    L$pad = pad
   }
   return(L)
 }

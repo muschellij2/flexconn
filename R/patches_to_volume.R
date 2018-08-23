@@ -10,6 +10,27 @@
 #'
 #' @return A 3D volume
 #' @export
+#' @examples
+#' library(neurobase)
+#' fname = system.file("extdata", "MPRAGE.nii.gz", package = "flexconn")
+#' t1 = readnii(fname)
+#' fname = system.file("extdata", "FLAIR.nii.gz", package = "flexconn")
+#' flair = readnii(fname)
+#' patchsize = c(3, 3)
+#' verbose = TRUE
+#' patch = get_patches(t1, flair, mask = NULL, patchsize = patchsize,
+#' only_patches = FALSE, normalize = FALSE)
+#' out_mask = patch$mask
+#' masked_t1 = mask_img(t1, out_mask)
+#' t1_remade = get_volume_from_patches(patch$t1_patches,
+#' indices = patch$indices,
+#' patchsize = patchsize,
+#' invert_pad = patch$pad)
+#' stopifnot(all(dim(t1) == dim(t1_remade)))
+#' t1vals = mask_vals(t1, out_mask)
+#' t1_remade_vals = mask_vals(t1_remade, out_mask)
+#' testthat::expect_equal(t1vals, t1_remade_vals)
+#'
 patches_to_volume = function(
   patches,
   indices,
@@ -18,6 +39,10 @@ patches_to_volume = function(
   orig_dim = NULL) {
 
   num_patches = ncol(indices)
+  matsize = get_matsize(num_patches, patchsize = patchsize)
+  dpatches = dim(patches)
+  stopifnot(all(dpatches == matsize))
+
   if (is.null(orig_dim)) {
     orig_dim = attributes(indices)$original_dimension
   }
@@ -27,8 +52,6 @@ patches_to_volume = function(
     warning("Duplicated indices! May be wrong")
     indices = t(unique(tindx))
   }
-  matsize = get_matsize(num_patches, patchsize = patchsize)
-
 
   if (is.null(orig_dim)) {
     stop("original dimensions cannot be estimated from this data!")
@@ -42,8 +65,8 @@ patches_to_volume = function(
   dsize = c(dsize, rep(0, length = 5 - length(dsize)))
 
   if (verbose) {
-    message("Size matrix to create: ",
-            paste(matsize, collapse = "x"))
+    message("Volume array to create: ",
+            paste(orig_dim, collapse = "x"))
   }
   vol <- array(dim = orig_dim)
 
@@ -52,10 +75,10 @@ patches_to_volume = function(
     y <- indices[2, i]
     z <- indices[3, i]
     if (ndim == 2) {
-      vol[x,y,z] = patches[i, index, index, 1]
+      vol[x,y,z] = patches[i, index[1], index[2], 1]
     }
     if (ndim == 3) {
-      vol[x,y,z] = patches[i, index, index, index, 1]
+      vol[x,y,z] = patches[i, index[1], index[2], index[3], 1]
     }
   }
   return(vol)
@@ -66,7 +89,7 @@ patches_to_volume = function(
 #' @param invert_pad Run \code{\link{invert_pad_image}} on the image
 #' before returning.
 #' @export
-get_volume_from_patch <- function(
+get_volume_from_patches <- function(
   patches,
   indices,
   patchsize,
