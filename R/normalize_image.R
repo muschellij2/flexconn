@@ -21,6 +21,7 @@
 normalize_image <- function(vol,
                             contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
                             verbose = TRUE) {
+  vol = check_nifti(vol, allow.array = TRUE)
   vol = vol / image_peak(vol, contrast)
 }
 
@@ -33,6 +34,8 @@ image_peak <- function(vol,
   contrast = toupper(contrast)
   contrast = match.arg(contrast)
   contrast = substr(contrast, 1, 2)
+
+  vol = check_nifti(vol, allow.array = TRUE)
 
   temp <- vol[vol != 0]
   q <- quantile(temp, probs = .99)
