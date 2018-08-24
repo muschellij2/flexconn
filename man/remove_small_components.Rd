@@ -23,5 +23,5 @@ Remove connected objects with volume <27 voxels
 set.seed(100)
 d = rep(50, 3)
 img = array(runif(prod(d), max = 1), dim = d)
-cc = removing_small_components(img, threshold = 0.9)
+cc = remove_small_components(img, threshold = 0.9)
 }

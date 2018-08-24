@@ -13,7 +13,7 @@
 #' set.seed(100)
 #' d = rep(50, 3)
 #' img = array(runif(prod(d), max = 1), dim = d)
-#' cc = removing_small_components(img, threshold = 0.9)
+#' cc = remove_small_components(img, threshold = 0.9)
 remove_small_components = function(img, threshold = 0.34) {
   sc = reticulate::import("scipy")
   np <- reticulate::import("numpy")
