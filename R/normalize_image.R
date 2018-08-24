@@ -22,7 +22,7 @@ normalize_image <- function(vol,
                             contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
                             verbose = TRUE) {
   vol = check_nifti(vol, allow.array = TRUE)
-  vol = vol / image_peak(vol, contrast)
+  vol = vol / image_peak(vol, contrast)$peak
 }
 
 #' @rdname normalize_image
@@ -69,6 +69,9 @@ image_peak <- function(vol,
   if (verbose) {
     message(paste("Peak found at", peak, "for", contrast))
   }
-  peak
+  L = list(peak = peak,
+           q99 = q,
+           bandwidth = bw)
+  return(L)
 }
 
