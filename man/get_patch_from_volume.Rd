@@ -8,7 +8,8 @@
 \title{Get Patches from 3D Volume}
 \usage{
 get_patch_from_volume(vol, mask = NULL, patchsize, verbose = TRUE,
-  pad = TRUE, normalize = TRUE, contrast, seed = NULL)
+  pad = TRUE, normalize = TRUE, contrast, seed = NULL,
+  run_mask_patches = TRUE)
 
 get_num_patches(mask)
 
@@ -38,6 +39,9 @@ to \code{\link{normalize_image}}}
 
 \item{seed}{Seed for random sampling of indices.  If \code{NULL},
 no sampling is done, passed to \code{\link{mask_indices}}}
+
+\item{run_mask_patches}{Should the patches for the mask be
+made as well?}
 
 \item{...}{not used}
 }

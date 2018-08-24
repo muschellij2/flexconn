@@ -33,7 +33,8 @@
 #'
 #' rm(patch)
 get_patches <- function(
-  t1, flair, t2 = NULL, mask = NULL, patchsize,
+  t1, flair, t2 = NULL,
+  mask = NULL, patchsize,
   pad = TRUE,
   normalize = TRUE,
   verbose = TRUE,
@@ -53,7 +54,8 @@ get_patches <- function(
     normalize = normalize,
     contrast = "T1",
     pad = pad,
-    seed = seed)
+    seed = seed,
+    run_mask_patches = FALSE)
   t1_patches = t1_patches$image_patches
   fl_patches = get_patch_from_volume(
     flair, mask = mask,
@@ -62,7 +64,8 @@ get_patches <- function(
     normalize = normalize,
     contrast = "FLAIR",
     pad = pad,
-    seed = seed)
+    seed = seed,
+    run_mask_patches = TRUE)
 
   t2_patches = NULL
   if (!is.null(t2)) {
@@ -73,7 +76,8 @@ get_patches <- function(
       normalize = normalize,
       contrast = "T2",
       pad = pad,
-      seed = seed)
+      seed = seed,
+      run_mask_patches = FALSE)
   }
   L = list(
     t1_patches = t1_patches,
@@ -106,6 +110,8 @@ get_patches <- function(
 #' before getting patches (pads then normalizes if \code{normalize = TRUE})
 #' @param seed Seed for random sampling of indices.  If \code{NULL},
 #' no sampling is done, passed to \code{\link{mask_indices}}
+#' @param run_mask_patches Should the patches for the mask be
+#' made as well?
 #'
 #' @param ... not used
 #'
@@ -133,7 +139,8 @@ get_patch_from_volume <- function(
   vol, mask = NULL, patchsize, verbose = TRUE,
   pad = TRUE,
   normalize = TRUE, contrast,
-  seed = NULL) {
+  seed = NULL,
+  run_mask_patches = TRUE) {
 
   ndim = length(patchsize)
   if (!ndim %in% c(2, 3)) {
@@ -151,7 +158,6 @@ get_patch_from_volume <- function(
 
   # num_patches = get_num_patches(mask)
 
-  blurmask = blur_mask(mask)
   indices = mask_indices(mask, seed = seed, verbose = verbose)
 
   # blurmask = bmask$blurred_mask
@@ -164,17 +170,24 @@ get_patch_from_volume <- function(
     patchsize = patchsize,
     verbose = verbose)
 
-  mask_patches = volume_to_patches(
-    vol = blurmask,
-    indices = indices,
-    patchsize = patchsize,
-    verbose = verbose)
+  mask_patches = NULL
+  blurmask = NULL
+  if (run_mask_patches) {
+    blurmask = blur_mask(mask)
+    mask_patches = volume_to_patches(
+      vol = blurmask,
+      indices = indices,
+      patchsize = patchsize,
+      verbose = verbose)
+  }
 
-  list(image_patches = t1_patches, mask_patches = mask_patches,
-       blurred_mask = blurmask,
-       indices = indices,
-       padded_mask = mask,
-       padded_vol = vol)
+  L = list(image_patches = t1_patches)
+  L$mask_patches = mask_patches
+  L$blurred_mask = blurmask
+  L$indices = indices
+  L$padded_mask = mask
+  L$padded_vol = vol
+  return(L)
 }
 
 
