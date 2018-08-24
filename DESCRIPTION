@@ -24,7 +24,8 @@ Imports:
     KernSmooth,
     reticulate,
     pracma,
-    stats
+    stats,
+    utils
 Suggests: 
     covr,
     knitr,

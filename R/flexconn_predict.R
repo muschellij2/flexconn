@@ -20,6 +20,7 @@
 #' mask
 #' @export
 #'
+#' @importFrom utils txtProgressBar setTxtProgressBar
 #' @importFrom stats predict
 #' @rdname flexconn_predict
 flexconn_predict_patch = function(
