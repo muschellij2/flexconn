@@ -7,6 +7,10 @@
 remove_small_components(img, threshold = 0.34)
 }
 \arguments{
+\item{img}{A probability image from \code{\link{flexconn_predict_with_volume}}
+or \code{\link{flexconn_predict}}, should be
+object of class \code{nifti} or an array}
+
 \item{threshold}{threshold to apply to image to create a mask}
 }
 \value{

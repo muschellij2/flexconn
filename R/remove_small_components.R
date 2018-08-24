@@ -3,7 +3,7 @@
 #'
 #' @param img A probability image from \code{\link{flexconn_predict_with_volume}}
 #' or \code{\link{flexconn_predict}}, should be
-#' object of class \code{nifti or an array
+#' object of class \code{nifti} or an array
 #' @param threshold threshold to apply to image to create a mask
 #'
 #' @return An array or object of class \code{nifti}
