@@ -46,6 +46,8 @@ count1 <- 1
 
 for (i in 1:n_atlas) {
 
+
+
   t1name <- file.path(atlas_dir, paste0("atlas", i, "_T1.nii.gz"))
   cat("Reading", t1name, "\n")
   t1 <- readnii(t1name) %>% img_data()
@@ -57,24 +59,13 @@ for (i in 1:n_atlas) {
   cat("Reading", maskname, "\n")
   mask <- readnii(maskname) %>% img_data()
 
-  ###
-  # seems these are no longer needed?
-  t1 <- normalize_image(t1, 'T1')
-  fl <- normalize_image(fl, 'FL')
-
-  ###
-  # seems these are no longer needed?
-  padded_t1 <- pad_image(t1, padsize)
-  padded_fl <- pad_image(fl, padsize)
-  padded_mask <- pad_image(mask, padsize)
-
-  cat("T1 orig dim: ", dim(t1), "\n")
-  cat("T1 padded to dim: ", dim(padded_t1), "\n")
-
   # invalid `%<-%` right-hand side, incorrect number of values
   #c(t1_patches_a, fl_patches_a, mask_patches_a) %<-%
-  c(t1_patches_a, fl_patches_a, mask_patches_a, ...) %<-%
-    get_patches(t1 = padded_t1, fl = padded_fl, mask = padded_mask, patchsize = patchsize)
+  c(t1_patches_a, fl_patches_a, mask_patches_a) %<-%
+    get_patches(t1 = t1, fl = fl, mask = mask,
+                patchsize = patchsize,
+                normalize = TRUE, pad = TRUE,
+                only_patches = TRUE)
 
   cat("Dim of T1 patches:", dim(t1_patches_a), "\n")
 
