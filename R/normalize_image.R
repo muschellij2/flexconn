@@ -140,7 +140,7 @@ flexconn_image_peak <- function(vol,
   peaks = y_mat[indx + 1]
 
   if (verbose) {
-    message(paste0(length(peaks), " peaks found.", "\n"))
+    message(paste0(length(peaks), " peaks found."))
   }
   if (contrast == "T1") {
     peak <- peaks[length(peaks)]
