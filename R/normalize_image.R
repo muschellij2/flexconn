@@ -134,8 +134,9 @@ flexconn_image_peak <- function(vol,
 
   indx = ss$argrelextrema(x_mat, np$greater)
   indx = np$asarray(indx, dtype = np$int)
-  heights = x_mat[indx]
-  peaks = y_mat[indx]
+  # indexing to 1!
+  heights = x_mat[indx + 1]
+  peaks = y_mat[indx + 1]
 
   if (verbose) {
     message(paste0(length(peaks), " peaks found.", "\n"))
