@@ -22,18 +22,17 @@
 #'
 normalize_image <- function(vol,
                             contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
-                            verbose = TRUE,
-                            gridsize = 128) {
+                            verbose = TRUE) {
   vol = check_nifti(vol, allow.array = TRUE)
-  vol = vol / image_peak(vol, contrast, gridsize = gridsize)$peak
+  # vol = vol / image_peak(vol, contrast)$peak
+  vol = vol / flexconn_image_peak(vol, contrast)$peak
 }
 
 #' @rdname normalize_image
 #' @export
 image_peak <- function(vol,
                        contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
-                       verbose = TRUE,
-                       gridsize = 128) ## scipy rounds up from 80 to 128)
+                       verbose = TRUE)
 {
 
   contrast = toupper(contrast)
@@ -51,6 +50,8 @@ image_peak <- function(vol,
   # j = ceiling(index)
   # q = temp[i] + (temp[j] - temp[i]) * frac
 
+  ## scipy rounds up from 80 to 128)
+  gridsize = 128
   q <- quantile(temp, probs = .99)
   temp <- temp[temp <= q]
   bw <- q / 80
@@ -92,8 +93,7 @@ image_peak <- function(vol,
 #' @export
 flexconn_image_peak <- function(vol,
                                 contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
-                                verbose = TRUE,
-                                gridsize = 80L) ## scipy rounds up from 80 to 128)
+                                verbose = TRUE) ## scipy rounds up from 80 to 128)
 {
   contrast = toupper(contrast)
   contrast = match.arg(contrast)
@@ -116,6 +116,7 @@ flexconn_image_peak <- function(vol,
 
   temp <- temp[temp <= q]
   bw <- q / 80
+  gridsize = 80L
   if (verbose) {
     message(paste0("99th quantile is ",
                    round(q, 3),
@@ -128,7 +129,7 @@ flexconn_image_peak <- function(vol,
 
   kde = sm$nonparametric$KDEUnivariate(temp)
 
-  kde$fit(kernel='gau', bw=bw, gridsize=gridsize, fft=TRUE)
+  kde$fit(kernel = 'gau', bw = bw, gridsize=gridsize, fft=TRUE)
   x_mat = 100.0 * kde$density
   y_mat = kde$support
 
