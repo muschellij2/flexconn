@@ -6,10 +6,10 @@
 \title{Normalize Image Based on the Peak}
 \usage{
 normalize_image(vol, contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
-  verbose = TRUE)
+  verbose = TRUE, gridsize = 128)
 
 image_peak(vol, contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
-  verbose = TRUE)
+  verbose = TRUE, gridsize = 128)
 }
 \arguments{
 \item{vol}{3D array or \code{nifti} image}
@@ -17,6 +17,9 @@ image_peak(vol, contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
 \item{contrast}{What imaging sequence of MRI is this volume}
 
 \item{verbose}{print diagnostic messages}
+
+\item{gridsize}{Grid size to use kernel density estiamtion.
+Passed to \code{\link[KernSmooth]{bkde}}}
 }
 \value{
 The peak of the image is returned for \code{image_peak}

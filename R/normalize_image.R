@@ -4,6 +4,8 @@
 #' @param vol 3D array or \code{nifti} image
 #' @param contrast What imaging sequence of MRI is this volume
 #' @param verbose print diagnostic messages
+#' @param gridsize Grid size to use kernel density estiamtion.
+#' Passed to \code{\link[KernSmooth]{bkde}}
 #'
 #' @return The peak of the image is returned for \code{image_peak}
 #' and the normalized image in \code{normalize_image}
@@ -20,16 +22,19 @@
 #'
 normalize_image <- function(vol,
                             contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
-                            verbose = TRUE) {
+                            verbose = TRUE,
+                            gridsize = 128) {
   vol = check_nifti(vol, allow.array = TRUE)
-  vol = vol / image_peak(vol, contrast)$peak
+  vol = vol / image_peak(vol, contrast, gridsize = gridsize)$peak
 }
 
 #' @rdname normalize_image
 #' @export
 image_peak <- function(vol,
                        contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
-                       verbose = TRUE) {
+                       verbose = TRUE,
+                       gridsize = 128) ## scipy rounds up from 80 to 128)
+{
 
   contrast = toupper(contrast)
   contrast = match.arg(contrast)
@@ -49,7 +54,6 @@ image_peak <- function(vol,
   q <- quantile(temp, probs = .99)
   temp <- temp[temp <= q]
   bw <- q / 80
-  gridsize <- 128 ## scipy rounds up from 80 to 128
   if (verbose) {
     message(paste0("99th quantile is ",
                    round(q, 3),
