@@ -3,6 +3,7 @@
 \name{normalize_image}
 \alias{normalize_image}
 \alias{image_peak}
+\alias{flexconn_image_peak}
 \title{Normalize Image Based on the Peak}
 \usage{
 normalize_image(vol, contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
@@ -10,6 +11,9 @@ normalize_image(vol, contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
 
 image_peak(vol, contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
   verbose = TRUE, gridsize = 128)
+
+flexconn_image_peak(vol, contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
+  verbose = TRUE, gridsize = 80L)
 }
 \arguments{
 \item{vol}{3D array or \code{nifti} image}

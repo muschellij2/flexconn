@@ -2,6 +2,7 @@
 
 export(blur_mask)
 export(flexconn_conv_chain)
+export(flexconn_image_peak)
 export(flexconn_model)
 export(flexconn_predict)
 export(flexconn_predict_patch)
