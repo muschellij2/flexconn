@@ -38,6 +38,14 @@ image_peak <- function(vol,
   vol = check_nifti(vol, allow.array = TRUE)
 
   temp <- vol[vol != 0]
+
+  # temp = sort(temp)
+  # index = length(temp) * 0.99
+  # frac = index %% 1
+  # i = floor(index)
+  # j = ceiling(index)
+  # q = temp[i] + (temp[j] - temp[i]) * frac
+
   q <- quantile(temp, probs = .99)
   temp <- temp[temp <= q]
   bw <- q / 80
