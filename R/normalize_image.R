@@ -4,8 +4,6 @@
 #' @param vol 3D array or \code{nifti} image
 #' @param contrast What imaging sequence of MRI is this volume
 #' @param verbose print diagnostic messages
-#' @param gridsize Grid size to use kernel density estiamtion.
-#' Passed to \code{\link[KernSmooth]{bkde}}
 #'
 #' @return The peak of the image is returned for \code{image_peak}
 #' and the normalized image in \code{normalize_image}

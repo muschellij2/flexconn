@@ -21,9 +21,6 @@ flexconn_image_peak(vol, contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
 \item{contrast}{What imaging sequence of MRI is this volume}
 
 \item{verbose}{print diagnostic messages}
-
-\item{gridsize}{Grid size to use kernel density estiamtion.
-Passed to \code{\link[KernSmooth]{bkde}}}
 }
 \value{
 The peak of the image is returned for \code{image_peak}
