@@ -107,12 +107,12 @@ flexconn_image_peak <- function(vol,
 
   temp <- vol[vol != 0]
 
-  temp = sort(temp)
-  index = length(temp) * 0.99
+  vals = sort(temp)
+  index = length(vals) * 0.99
   frac = index %% 1
   i = floor(index)
   j = ceiling(index)
-  q = temp[i] + (temp[j] - temp[i]) * frac
+  q = vals[i] + (vals[j] - vals[i]) * frac
 
   temp <- temp[temp <= q]
   bw <- q / 80
@@ -133,7 +133,7 @@ flexconn_image_peak <- function(vol,
   y_mat = kde$support
 
   indx = ss$argrelextrema(x_mat, np$greater)
-  indx = np$asarray(indx, dtype=np$int)
+  indx = np$asarray(indx, dtype = np$int)
   heights = x_mat[indx]
   peaks = y_mat[indx]
 
@@ -151,7 +151,8 @@ flexconn_image_peak <- function(vol,
   }
   L = list(peak = peak,
            q99 = q,
-           bandwidth = bw)
+           bandwidth = bw,
+           peaks = peaks)
   return(L)
 
 }
