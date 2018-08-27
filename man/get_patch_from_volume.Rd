@@ -9,12 +9,12 @@
 \usage{
 get_patch_from_volume(vol, mask = NULL, patchsize, verbose = TRUE,
   pad = TRUE, normalize = TRUE, contrast, seed = NULL,
-  run_mask_patches = TRUE)
+  run_mask_patches = TRUE, peak_estimator = c("Python", "R"))
 
 get_num_patches(mask)
 
 norm_pad(vol, mask = NULL, patchsize, verbose = TRUE, pad = TRUE,
-  normalize = TRUE, contrast)
+  normalize = TRUE, peak_estimator = c("Python", "R"), contrast)
 
 get_mask_patches(mask, patchsize, pad = TRUE, seed = NULL,
   verbose = TRUE)
@@ -43,6 +43,9 @@ no sampling is done, passed to \code{\link{mask_indices}}}
 \item{run_mask_patches}{Should the patches for the mask be
 made as well?}
 
+\item{peak_estimator}{Which functions to use to estimate peak,
+either wrapper Python code or native R code.}
+
 \item{...}{not used}
 }
 \value{
@@ -52,6 +55,11 @@ A list of image and mask Patches
 Get Patches from 3D Volume
 }
 \examples{
+user = Sys.getenv("USER")
+if (user == "johnmuschelli") {
+reticulate::use_python(paste0(
+"/Library/Frameworks/Python.framework/Versions/3.5/bin/python3"))
+}
 library(neurobase)
 fname = system.file("extdata", "MPRAGE.nii.gz", package = "flexconn")
 vol = readnii(fname)

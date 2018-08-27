@@ -7,7 +7,7 @@
 \title{Normalize Image Based on the Peak}
 \usage{
 normalize_image(vol, contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
-  verbose = TRUE)
+  peak_estimator = c("Python", "R"), verbose = TRUE)
 
 image_peak(vol, contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
   verbose = TRUE)
@@ -19,6 +19,9 @@ flexconn_image_peak(vol, contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
 \item{vol}{3D array or \code{nifti} image}
 
 \item{contrast}{What imaging sequence of MRI is this volume}
+
+\item{peak_estimator}{Which functions to use to estimate peak,
+either wrapper Python code or native R code.}
 
 \item{verbose}{print diagnostic messages}
 }

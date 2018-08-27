@@ -4,6 +4,8 @@
 #' @param vol 3D array or \code{nifti} image
 #' @param contrast What imaging sequence of MRI is this volume
 #' @param verbose print diagnostic messages
+#' @param peak_estimator Which functions to use to estimate peak,
+#' either wrapper Python code or native R code.
 #'
 #' @return The peak of the image is returned for \code{image_peak}
 #' and the normalized image in \code{normalize_image}
@@ -20,17 +22,26 @@
 #'
 normalize_image <- function(vol,
                             contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
+                            peak_estimator = c("Python", "R"),
                             verbose = TRUE) {
   vol = check_nifti(vol, allow.array = TRUE)
-  # vol = vol / image_peak(vol, contrast)$peak
-  vol = vol / flexconn_image_peak(vol, contrast)$peak
+
+  peak_estimator = tolower(peak_estimator)
+  peak_estimator = match.arg(peak_estimator,
+                             c("python", "r"))
+  func = switch(peak_estimator,
+                python = flexconn_image_peak,
+                r = image_peak)
+  peak = func(vol, contrast)$peak
+  vol = vol / peak
 }
 
 #' @rdname normalize_image
 #' @export
-image_peak <- function(vol,
-                       contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
-                       verbose = TRUE)
+image_peak <- function(
+  vol,
+  contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
+  verbose = TRUE)
 {
 
   contrast = toupper(contrast)

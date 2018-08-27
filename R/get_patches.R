@@ -13,6 +13,8 @@
 #' @param only_patches Only return the patches, not additional information.
 #' @param seed Seed for random sampling of indices.  If \code{NULL},
 #' no sampling is done, passed to \code{\link{mask_indices}}
+#' @param ... additional arguments to pass to
+#' \code{\link{get_patch_from_volume}}
 #'
 #' @note If \code{mask = NULL}, a mask will be created based on
 #' voxels greater than the 75th percentile of the FLAIR image.
@@ -39,7 +41,8 @@ get_patches <- function(
   normalize = TRUE,
   verbose = TRUE,
   only_patches = FALSE,
-  seed = NULL) {
+  seed = NULL,
+  ...) {
 
   if (is.null(mask)) {
     flair = check_nifti(flair, allow.array = TRUE)
@@ -55,7 +58,8 @@ get_patches <- function(
     contrast = "T1",
     pad = pad,
     seed = seed,
-    run_mask_patches = FALSE)
+    run_mask_patches = FALSE,
+    ...)
   t1_patches = t1_patches$image_patches
   fl_patches = get_patch_from_volume(
     flair, mask = mask,
@@ -65,7 +69,8 @@ get_patches <- function(
     contrast = "FLAIR",
     pad = pad,
     seed = seed,
-    run_mask_patches = TRUE)
+    run_mask_patches = TRUE,
+    ...)
 
   t2_patches = NULL
   if (!is.null(t2)) {
@@ -77,7 +82,8 @@ get_patches <- function(
       contrast = "T2",
       pad = pad,
       seed = seed,
-      run_mask_patches = FALSE)
+      run_mask_patches = FALSE,
+      ...)
   }
   L = list(
     t1_patches = t1_patches,
@@ -121,6 +127,11 @@ get_patches <- function(
 #' @importFrom reticulate import
 #' @importFrom neurobase check_nifti
 #' @examples
+#' user = Sys.getenv("USER")
+#' if (user == "johnmuschelli") {
+#' reticulate::use_python(paste0(
+#' "/Library/Frameworks/Python.framework/Versions/3.5/bin/python3"))
+#' }
 #' library(neurobase)
 #' fname = system.file("extdata", "MPRAGE.nii.gz", package = "flexconn")
 #' vol = readnii(fname)
@@ -140,7 +151,9 @@ get_patch_from_volume <- function(
   pad = TRUE,
   normalize = TRUE, contrast,
   seed = NULL,
-  run_mask_patches = TRUE) {
+  run_mask_patches = TRUE,
+  peak_estimator = c("Python", "R")
+  ) {
 
   ndim = length(patchsize)
   if (!ndim %in% c(2, 3)) {
@@ -152,7 +165,8 @@ get_patch_from_volume <- function(
     patchsize = patchsize,
     verbose = verbose,
     pad = pad,
-    normalize = normalize, contrast = contrast)
+    normalize = normalize, contrast = contrast,
+    peak_estimator = peak_estimator)
   mask = res$mask
   vol = res$vol
 
@@ -204,6 +218,8 @@ get_num_patches = function(mask) {
 
 
 #' @rdname get_patch_from_volume
+#' @param peak_estimator Which functions to use to estimate peak,
+#' either wrapper Python code or native R code.
 #' @export
 norm_pad = function(
   vol,
@@ -212,10 +228,13 @@ norm_pad = function(
   verbose = TRUE,
   pad = TRUE,
   normalize = TRUE,
+  peak_estimator = c("Python", "R"),
   contrast) {
   vol = check_nifti(vol, allow.array = TRUE)
   if (normalize) {
-    vol = normalize_image(vol = vol, contrast = contrast, verbose = verbose)
+    vol = normalize_image(vol = vol, contrast = contrast,
+                          verbose = verbose,
+                          peak_estimator = peak_estimator)
   }
   if (is.null(mask)) {
     mask = vol != 0

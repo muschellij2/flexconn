@@ -6,7 +6,7 @@
 \usage{
 get_patches(t1, flair, t2 = NULL, mask = NULL, patchsize, pad = TRUE,
   normalize = TRUE, verbose = TRUE, only_patches = FALSE,
-  seed = NULL)
+  seed = NULL, ...)
 }
 \arguments{
 \item{t1}{3D array or \code{nifti} image}
@@ -31,6 +31,9 @@ before getting patches}
 
 \item{seed}{Seed for random sampling of indices.  If \code{NULL},
 no sampling is done, passed to \code{\link{mask_indices}}}
+
+\item{...}{additional arguments to pass to
+\code{\link{get_patch_from_volume}}}
 }
 \value{
 A list of T1, FLAIR, and Mask Patches
