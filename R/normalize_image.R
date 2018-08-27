@@ -121,12 +121,10 @@ flexconn_image_peak <- function(vol,
 
   temp <- vol[vol != 0]
 
-  vals = sort(temp)
-  index = length(vals) * 0.99
-  frac = index %% 1
-  i = floor(index)
-  j = ceiling(index)
-  q = vals[i] + (vals[j] - vals[i]) * frac
+  q = np$percentile(temp, 99L)
+  # does not give same results
+  # WHYYYY
+  # q = numpy_percentile(temp, probs = 0.99)
 
   temp <- temp[temp <= q]
   bw <- q / 80
