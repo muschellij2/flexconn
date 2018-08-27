@@ -54,7 +54,12 @@ flexconn_predict = function(
   patchsize, verbose = TRUE,
   normalize = TRUE, ..., batch_size = 1) {
 
-  n_images = length(model$input)
+  n_images = tryCatch({
+    length(model$input)
+  })
+  if (inherits(n_images, "try-error")) {
+    n_images = length(model$input_layers)
+  }
   if ( n_images == 2 & !is.null(t2)) {
     stop("T2 can't be specified - only 2 images as inputs")
   }
@@ -132,7 +137,12 @@ flexconn_predict_with_volume = function(
   verbose = TRUE, normalize = TRUE,
   ..., batch_size = 1) {
 
-  n_images = length(model$input_layers)
+  n_images = tryCatch({
+    length(model$input)
+  })
+  if (inherits(n_images, "try-error")) {
+    n_images = length(model$input_layers)
+  }
   if ( n_images == 2 & !is.null(t2)) {
     stop("T2 can't be specified - only 2 images as inputs")
   }
