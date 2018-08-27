@@ -13,7 +13,10 @@
 #' Integer. Passed to
 #' \code{\link[keras]{predict.keras.engine.training.Model}}.
 #' @param ... additional arguments to \code{\link{get_patches}}
-#'
+#' @param normalize Run \code{\link{normalize_image}} on the image
+#' before getting patches
+#' @param type type of prediction to use, patch-based or slice/volume
+#' based
 #' @note If \code{mask = NULL}, a mask will be generated for
 #' \code{t1 > 0}.
 #' @return A vector of predictions, based on the indices of the
@@ -49,32 +52,45 @@ flexconn_predict_patch = function(
 flexconn_predict = function(
   model, t1, flair, t2 = NULL,
   mask = NULL,
-  patchsize, verbose = TRUE, ..., batch_size = 1) {
+  type = c("volume", "patch"),
+  patchsize, verbose = TRUE,
+  normalize = TRUE, ..., batch_size = 1) {
 
   n_images = length(model$input)
   if ( n_images == 2 & !is.null(t2)) {
     stop("T2 can't be specified - only 2 images as inputs")
   }
-  res = flexconn_predict_with_patches(
-    model = model,
-    t1 = t1,
-    flair = flair,
-    t2 = t2,
-    mask = mask,
-    patchsize = patchsize,
-    verbose = verbose,
-    ... = ...,
-    batch_size = batch_size
-  )
-  preds = res$preds
+  type = match.arg(type)
+  if (type == "patch") {
+    res = flexconn_predict_with_patches(
+      model = model,
+      t1 = t1,
+      flair = flair,
+      t2 = t2,
+      mask = mask,
+      patchsize = patchsize,
+      verbose = verbose,
+      normalize = normalize,
+      ... = ...,
+      batch_size = batch_size
+    )
+    preds = res$preds
 
-  vol = get_volume_from_patches(
-    patches = preds,
-    indices = res$indices,
-    patchsize = patchsize,
-    verbose = verbose,
-    invert_pad = res$pad
-  )
+    vol = get_volume_from_patches(
+      patches = preds,
+      indices = res$indices,
+      patchsize = patchsize,
+      verbose = verbose,
+      invert_pad = res$pad
+    )
+  }
+
+  if (type == "volume") {
+    vol = flexconn_predict_with_volume(
+      model = model, t1 = t1, flair = flair, t2 = t2,
+      verbose = verbose, normalize = normalize,
+      ... = ..., batch_size = batch_size)
+  }
   return(vol)
 
 }

@@ -10,8 +10,9 @@
 flexconn_predict_patch(model, t1, flair, t2 = NULL, mask = NULL,
   patchsize, verbose = TRUE, ..., batch_size = 1)
 
-flexconn_predict(model, t1, flair, t2 = NULL, mask = NULL, patchsize,
-  verbose = TRUE, ..., batch_size = 1)
+flexconn_predict(model, t1, flair, t2 = NULL, mask = NULL,
+  type = c("volume", "patch"), patchsize, verbose = TRUE,
+  normalize = TRUE, ..., batch_size = 1)
 
 flexconn_predict_with_patches(model, t1, flair, t2 = NULL, mask = NULL,
   patchsize, verbose = TRUE, ..., batch_size = 1)
@@ -40,6 +41,12 @@ the whole area of prediction, not the ground truth}
 \item{batch_size}{Size of batches for prediction.
 Integer. Passed to
 \code{\link[keras]{predict.keras.engine.training.Model}}.}
+
+\item{type}{type of prediction to use, patch-based or slice/volume
+based}
+
+\item{normalize}{Run \code{\link{normalize_image}} on the image
+before getting patches}
 
 \item{normalize}{Run \code{\link{normalize_image}} on the image
 before getting patches}
