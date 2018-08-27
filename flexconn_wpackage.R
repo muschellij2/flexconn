@@ -17,11 +17,20 @@ run_model %>% compile(
 
 atlas_dir <- "lesion_challenge"
 n_atlas <- 21
-psize <- 35
-model_dir <- "saved_models"
 
+psize <- 35
 patchsize <- rep(psize, ndim)
 padsize = patchsize_to_padsize(patchsize = patchsize)
+
+model_exists <- TRUE
+
+model_dir <- "saved_models"
+# change this to use a model of your choice
+restore_path <- file.path(model_dir, "weights.05-51.56.hdf5")
+tmp_data_dir <- "tmp_data"
+
+# model configuration
+batch_size <- 128
 
 
 # Read data ---------------------------------------------------------------
@@ -46,8 +55,6 @@ count1 <- 1
 
 for (i in 1:n_atlas) {
 
-
-
   t1name <- file.path(atlas_dir, paste0("atlas", i, "_T1.nii.gz"))
   cat("Reading", t1name, "\n")
   t1 <- readnii(t1name) %>% img_data()
@@ -59,8 +66,6 @@ for (i in 1:n_atlas) {
   cat("Reading", maskname, "\n")
   mask <- readnii(maskname) %>% img_data()
 
-  # invalid `%<-%` right-hand side, incorrect number of values
-  #c(t1_patches_a, fl_patches_a, mask_patches_a) %<-%
   c(t1_patches_a, fl_patches_a, mask_patches_a) %<-%
     get_patches(t1 = t1, fl = fl, mask = mask,
                 patchsize = patchsize,
@@ -95,18 +100,25 @@ cat("Total number of patches collected = ", count2, "\n")
 cat("Size of the input matrix is ", dim(mask_patches), "\n")
 
 
-# Train-test split --------------------------------------------------------
+# Optional train-test split --------------------------------------------------------
 
 train_indx <- sample(1:num_patches, num_patches * 0.7)
+# optionally save indices
+save_split <- FALSE
+if (save_split) {
+  train_indx %>% saveRDS(file.path(tmp_data_dir, "train_indx.rds"))
+} else {
+  train_indx <- readRDS(file.path(tmp_data_dir, "train_indx.rds"))
+}
 
 c(t1_train, t1_test) %<-% list(t1_patches[train_indx, , , , drop = FALSE], t1_patches[-train_indx, , ,  , drop = FALSE])
 c(fl_train, fl_test) %<-% list(fl_patches[train_indx, , ,  , drop = FALSE], fl_patches[-train_indx, , , , drop = FALSE])
 c(mask_train, mask_test) %<-% list(mask_patches[train_indx, , , , drop = FALSE], mask_patches[-train_indx, , ,  , drop = FALSE])
 
 
-model_exists <- FALSE
-#restore_path <- "weights.05-10.58.hdf5"
-batch_size <- 128
+
+# Train or load model -----------------------------------------------------
+
 
 if(!model_exists) {
   model <- flexconn_model()
@@ -119,36 +131,45 @@ if(!model_exists) {
     x = list(t1_train, fl_train),
     y = mask_train,
     batch_size = batch_size,
-    epochs = 1,
+    epochs = 10,
     validation_split = 0.2,
     callbacks = list(callback_model_checkpoint(filepath = "weights.{epoch:02d}-{val_loss:.2f}.hdf5"),
                      callback_early_stopping(patience = 1)))
-  saveRDS(history, "history.rds")
+  saveRDS(history, file.path(tmp_data_dir, "history.rds"))
 } else {
   model <- load_model_hdf5(restore_path)
-  history <- readRDS("history.rds")
+  history <- readRDS(file.path(tmp_data_dir, "history.rds"))
 }
+
+
+# Evaluate model ----------------------------------------------------------
+
 
 plot(history, metrics = "loss")
 
-par(mfrow = c(6,6))
-par(mar = c(0.5, 0.5, 0.5, 0.5),
-    xaxs = 'i',
-    yaxs = 'i')
-for (i in 1:36) {
-  preds <- model %>% predict(list(t1_test[i, , , , drop = FALSE],
-                                  fl_test[i, , , , drop = FALSE]),
-                             batch_size = 1)
-  true <- mask_test[i, , , , drop = FALSE]
-  cor(true, preds) %>% print()
-  preds[1, , , ] %>% image(col = grey.colors(n=10),  xaxt = 'n',
-                           yaxt = 'n')
-  true[1, , , ] %>% image(col = grey.colors(n=10),  xaxt = 'n',
-                          yaxt = 'n')
-}
+# model %>% evaluate(x = list(t1_test,
+#                             fl_test),
+#                    y = mask_test,
+#                    batch_size = 1)
 
 
-model %>% evaluate(x = list(t1_test,
-                            fl_test),
-                   y = mask_test,
-                   batch_size = 1)
+
+# Get predictions ---------------------------------------------------------
+
+test_fl <- system.file("extdata/FLAIR.nii.gz", package = "flexconn")
+test_t1 <- system.file("extdata/MPRAGE.nii.gz", package = "flexconn")
+
+# OOM
+# model %>% flexconn_predict(t1 = test_t1,
+#                            flair = test_fl,
+#                            patchsize = c(35, 35))
+
+# OOM
+# model %>% flexconn_predict_with_patches(t1 = test_t1,
+#                            flair = test_fl,
+#                            patchsize = c(35, 35))
+
+model %>% predict(list(t1_test[1, , , , drop = FALSE],
+                       fl_test[1, , , , drop = FALSE]))
+
+

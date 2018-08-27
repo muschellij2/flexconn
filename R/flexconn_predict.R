@@ -51,7 +51,7 @@ flexconn_predict = function(
   mask = NULL,
   patchsize, verbose = TRUE, ..., batch_size = 1) {
 
-  n_images = length(model$input_layers)
+  n_images = length(model$input)
   if ( n_images == 2 & !is.null(t2)) {
     stop("T2 can't be specified - only 2 images as inputs")
   }
