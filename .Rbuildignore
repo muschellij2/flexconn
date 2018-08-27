@@ -1,3 +1,4 @@
+^saved_models$
 ^codecov\.yml$
 ^\.travis\.yml$
 ^appveyor\.yml$
