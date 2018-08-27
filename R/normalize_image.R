@@ -15,6 +15,11 @@
 #' @importFrom stats quantile
 #'
 #' @examples
+#' user = Sys.getenv("USER")
+#' if (user == "johnmuschelli") {
+#' reticulate::use_python(paste0(
+#' "/Library/Frameworks/Python.framework/Versions/3.5/bin/python3"))
+#' }
 #' set.seed(1)
 #' vol = array(rpois(10^3, lambda = 10), dim = rep(10, 3))
 #' vol[ vol < 6] = 0

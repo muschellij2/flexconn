@@ -10,6 +10,11 @@
 #' @export
 #'
 #' @examples
+#' user = Sys.getenv("USER")
+#' if (user == "johnmuschelli") {
+#' reticulate::use_python(paste0(
+#' "/Library/Frameworks/Python.framework/Versions/3.5/bin/python3"))
+#' }
 #' set.seed(100)
 #' d = rep(50, 3)
 #' img = array(runif(prod(d), max = 1), dim = d)

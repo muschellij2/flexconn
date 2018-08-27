@@ -33,6 +33,11 @@ and the normalized image in \code{normalize_image}
 Normalize Image Based on the Peak
 }
 \examples{
+user = Sys.getenv("USER")
+if (user == "johnmuschelli") {
+reticulate::use_python(paste0(
+"/Library/Frameworks/Python.framework/Versions/3.5/bin/python3"))
+}
 set.seed(1)
 vol = array(rpois(10^3, lambda = 10), dim = rep(10, 3))
 vol[ vol < 6] = 0

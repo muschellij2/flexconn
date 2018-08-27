@@ -27,6 +27,11 @@ A keras model object
 FLEXCONN Model
 }
 \examples{
+user = Sys.getenv("USER")
+if (user == "johnmuschelli") {
+reticulate::use_python(paste0(
+"/Library/Frameworks/Python.framework/Versions/3.5/bin/python3"))
+}
 res = flexconn_model()
 res = flexconn_model(prefixes = c("t1", "fl", "t2"))
 }

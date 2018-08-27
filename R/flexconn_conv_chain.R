@@ -12,6 +12,11 @@
 #' @export
 #'
 #' @examples
+#' user = Sys.getenv("USER")
+#' if (user == "johnmuschelli") {
+#' reticulate::use_python(paste0(
+#' "/Library/Frameworks/Python.framework/Versions/3.5/bin/python3"))
+#' }
 #' library(tensorflow)
 #' library(keras)
 #'  t1_input <- layer_input(shape = shape(NULL, NULL, 1))
