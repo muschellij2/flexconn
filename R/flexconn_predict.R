@@ -159,7 +159,7 @@ flexconn_predict_with_volume = function(
   # patches and last channel
   ndim = length(model$input_shape[[1]]) - 2
   t1 = check_nifti(t1)
-  flair = check_nifti(t1)
+  flair = check_nifti(flair)
   if (!is.null(t2)) {
     t2 = check_nifti(t2)
   }
@@ -187,8 +187,7 @@ flexconn_predict_with_volume = function(
   arr_dim = c(1, dims[seq(ndim)], 1)
 
   slice_2d_t1 = array(0, dim = arr_dim)
-  slice_2d_fl = array(0, dim = arr_dim)
-  slice_2d_t2 = array(0, dim = arr_dim)
+  slice_2d_t2 = slice_2d_fl = slice_2d_t1
 
   output_image = array(dim = dims)
 
