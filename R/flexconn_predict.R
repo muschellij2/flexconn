@@ -127,9 +127,10 @@ flexconn_predict_with_patches = function(
   if (verbose) {
     message("Predicting from Patches")
   }
-  preds <- model %>% predict(L,
-                             verbose = verbose,
-                             batch_size = batch_size)
+  preds <- model %>%
+    predict(L,
+            verbose = verbose,
+            batch_size = batch_size)
   patches$preds = preds
   return(patches)
 }
@@ -168,14 +169,17 @@ flexconn_predict_with_volume = function(
     }
     t1 = normalize_image(
       vol = t1, contrast = "T1",
-      verbose = verbose)
+      verbose = verbose,
+      ...)
     flair = normalize_image(
       vol = flair, contrast = "FLAIR",
-      verbose = verbose)
+      verbose = verbose,
+      ...)
     if (!is.null(t2)) {
       t2 = normalize_image(
         vol = t2, contrast = "T2",
-        verbose = verbose)
+        verbose = verbose,
+        ...)
     }
   }
 
