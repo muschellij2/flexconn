@@ -79,6 +79,9 @@ flexconn_predict = function(
     )
     preds = res$preds
 
+    if (verbose) {
+      message("Creating Volume from Patch Prediction")
+    }
     vol = get_volume_from_patches(
       patches = preds,
       indices = res$indices,
@@ -105,6 +108,9 @@ flexconn_predict_with_patches = function(
   mask = NULL,
   patchsize, verbose = TRUE, ..., batch_size = 1) {
 
+  if (verbose) {
+    message("Creating Patches")
+  }
   patches = get_patches(
     t1 = t1, flair = flair,
     t2 = t2, patchsize = patchsize,
@@ -118,7 +124,9 @@ flexconn_predict_with_patches = function(
   L = list(t1_test,
            fl_test)
   L$t2_test = t2_test
-
+  if (verbose) {
+    message("Predicting from Patches")
+  }
   preds <- model %>% predict(L,
                              verbose = verbose,
                              batch_size = batch_size)
@@ -155,6 +163,9 @@ flexconn_predict_with_volume = function(
     t2 = check_nifti(t2)
   }
   if (normalize) {
+    if (verbose) {
+      message("Normalizing Images")
+    }
     t1 = normalize_image(
       vol = t1, contrast = "T1",
       verbose = verbose)
@@ -177,6 +188,9 @@ flexconn_predict_with_volume = function(
 
   output_image = array(dim = dims)
 
+  if (verbose) {
+    message("Predicting from model")
+  }
   if (ndim == 2) {
     n_slices = dims[3]
     k = n_slices
