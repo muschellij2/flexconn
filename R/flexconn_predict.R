@@ -13,8 +13,6 @@
 #' Integer. Passed to
 #' \code{\link[keras]{predict.keras.engine.training.Model}}.
 #' @param ... additional arguments to \code{\link{get_patches}}
-#' @param normalize Run \code{\link{normalize_image}} on the image
-#' before getting patches
 #' @param type type of prediction to use, patch-based or slice/volume
 #' based
 #' @note If \code{mask = NULL}, a mask will be generated for
@@ -127,7 +125,7 @@ flexconn_predict_with_patches = function(
 #' @rdname flexconn_predict
 #' @importFrom neurobase niftiarr
 #' @param normalize Run \code{\link{normalize_image}} on the image
-#' before getting patches
+#' before prediction
 #' @export
 flexconn_predict_with_volume = function(
   model, t1, flair, t2 = NULL,

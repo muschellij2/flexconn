@@ -46,10 +46,7 @@ Integer. Passed to
 based}
 
 \item{normalize}{Run \code{\link{normalize_image}} on the image
-before getting patches}
-
-\item{normalize}{Run \code{\link{normalize_image}} on the image
-before getting patches}
+before prediction}
 }
 \value{
 A vector of predictions, based on the indices of the
