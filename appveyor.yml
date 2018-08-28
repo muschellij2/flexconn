@@ -1,9 +1,9 @@
 init:
   - "ECHO %PYTHON_VERSION% %MINICONDA%"
   - ps: |
-      $ErrorActionPreference = "Stop"
-      Invoke-WebRequest http://raw.github.com/krlmlr/r-appveyor/master/scripts/appveyor-tool.ps1 -OutFile "..\appveyor-tool.ps1"
-      Import-Module '..\appveyor-tool.ps1'
+        $ErrorActionPreference = "Stop"
+        Invoke-WebRequest http://raw.github.com/krlmlr/r-appveyor/master/scripts/appveyor-tool.ps1 -OutFile "..\appveyor-tool.ps1"
+        Import-Module '..\appveyor-tool.ps1'
 
 
 environment:
@@ -23,7 +23,7 @@ install:
   - if exist "requirements.txt" conda clean --all -q
   - if exist "requirements.txt" conda create -q -n test-environment python="%PYTHON_VERSION%" --file requirements.txt
 
-cache: C:\RLibrary
+# cache: C:\RLibrary
 build_script: travis-tool.sh install_deps
 test_script: travis-tool.sh run_tests
 on_failure:
