@@ -28,13 +28,11 @@ mask_indices = function(mask, seed = NULL, verbose = TRUE) {
   if (verbose) {
     message("Number of patches used: ", num_patches, "\n")
   }
-  randindx <- sample(1:num_patches, num_patches, replace = FALSE)
-  newindx <- matrix(0, nrow = 3, ncol = num_patches)
-  for (i in 1:num_patches) {
-    for (j in 1:3) {
-      newindx[j, i] <- indx[j, randindx[i]]
-    }
-  }
+  # random permutation
+  randindx <- sample.int(num_patches,
+                         size = num_patches, replace = FALSE)
+  newindx <- indx[, randindx]
+
   attr(newindx, "original_dimension") = dmask
   return(newindx)
 }
