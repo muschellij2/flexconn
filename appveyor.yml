@@ -11,8 +11,8 @@ environment:
     WARNINGS_ARE_ERRORS: 1.0
     USE_RTOOLS: yes
     R_CHECK_INSTALL_ARGS: --install-args=--build --no-multiarch
-    PYTHON_VERSION: 3.6
-    MINICONDA: C:\Miniconda3-x64
+    PYTHON_VERSION: 2.7
+    MINICONDA: C:\Miniconda-x64
 
 install:
   - ps: Bootstrap
@@ -20,7 +20,6 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - if exist "requirements.txt" conda update -q conda
   - if exist "requirements.txt" conda info -a
-  - conda install -h
   - if exist "requirements.txt" conda create -q -n test-environment python="%PYTHON_VERSION%" --file requirements.txt
 
 cache: C:\RLibrary
