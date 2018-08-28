@@ -1,3 +1,4 @@
+^requirements\.txt$
 ^saved_models$
 ^codecov\.yml$
 ^\.travis\.yml$
