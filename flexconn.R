@@ -54,7 +54,6 @@ count2 <- 1
 count1 <- 1
 
 for (i in 1:n_atlas) {
-
   t1name <- file.path(atlas_dir, paste0("atlas", i, "_T1.nii.gz"))
   cat("Reading", t1name, "\n")
   t1 <- readnii(t1name) %>% img_data()
@@ -67,10 +66,15 @@ for (i in 1:n_atlas) {
   mask <- readnii(maskname) %>% img_data()
 
   c(t1_patches_a, fl_patches_a, mask_patches_a) %<-%
-    get_patches(t1 = t1, fl = fl, mask = mask,
-                patchsize = patchsize,
-                normalize = TRUE, pad = TRUE,
-                only_patches = TRUE)
+    get_patches(
+      t1 = t1,
+      fl = fl,
+      mask = mask,
+      patchsize = patchsize,
+      normalize = TRUE,
+      pad = TRUE,
+      only_patches = TRUE
+    )
 
   cat("Dim of T1 patches:", dim(t1_patches_a), "\n")
 
@@ -80,15 +84,15 @@ for (i in 1:n_atlas) {
     cat("Atlas", i, "indices:", count1, count2, "\n")
 
     if (ndim == 2) {
-      t1_patches[  count1:count2, , , ] <- t1_patches_a
-      fl_patches[  count1:count2, , , ] <- fl_patches_a
-      mask_patches[count1:count2, , , ] <- mask_patches_a
+      t1_patches[count1:count2, , ,] <- t1_patches_a
+      fl_patches[count1:count2, , ,] <- fl_patches_a
+      mask_patches[count1:count2, , ,] <- mask_patches_a
     }
 
     if (ndim == 3) {
-      t1_patches[  count1:count2, , , , ] <- t1_patches_a
-      fl_patches[  count1:count2, , , , ] <- fl_patches_a
-      mask_patches[count1:count2, , , , ] <- mask_patches_a
+      t1_patches[count1:count2, , , ,] <- t1_patches_a
+      fl_patches[count1:count2, , , ,] <- fl_patches_a
+      mask_patches[count1:count2, , , ,] <- mask_patches_a
     }
 
     count1 <- count1 + pdim
@@ -120,7 +124,7 @@ c(mask_train, mask_test) %<-% list(mask_patches[train_indx, , , , drop = FALSE],
 # Train or load model -----------------------------------------------------
 
 
-if(!model_exists) {
+if (!model_exists) {
   model <- flexconn_model()
   model %>% compile(
     optimizer = optimizer_adam(lr =  0.0001),
@@ -133,8 +137,11 @@ if(!model_exists) {
     batch_size = batch_size,
     epochs = 10,
     validation_split = 0.2,
-    callbacks = list(callback_model_checkpoint(filepath = "weights.{epoch:02d}-{val_loss:.2f}.hdf5"),
-                     callback_early_stopping(patience = 1)))
+    callbacks = list(
+      callback_model_checkpoint(filepath = "weights.{epoch:02d}-{val_loss:.2f}.hdf5"),
+      callback_early_stopping(patience = 1)
+    )
+  )
   saveRDS(history, file.path(tmp_data_dir, "history.rds"))
 } else {
   model <- load_model_hdf5(restore_path)
@@ -157,19 +164,12 @@ plot(history, metrics = "loss")
 # Get predictions ---------------------------------------------------------
 
 test_fl <- system.file("extdata/FLAIR.nii.gz", package = "flexconn")
-test_t1 <- system.file("extdata/MPRAGE.nii.gz", package = "flexconn")
+test_t1 <-
+  system.file("extdata/MPRAGE.nii.gz", package = "flexconn")
 
-# OOM
-# model %>% flexconn_predict(t1 = test_t1,
-#                            flair = test_fl,
-#                            patchsize = c(35, 35))
-
-# OOM
-# model %>% flexconn_predict_with_patches(t1 = test_t1,
-#                            flair = test_fl,
-#                            patchsize = c(35, 35))
-
-model %>% predict(list(t1_test[1, , , , drop = FALSE],
-                       fl_test[1, , , , drop = FALSE]))
+predicted <- model %>% flexconn_predict(t1 = test_t1,
+                                        flair = test_fl,
+                                        patchsize = c(35, 35))
 
 
+image(predicted, z = 100, plot.type = "single")
