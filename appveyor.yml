@@ -20,7 +20,7 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - if exist "requirements.txt" conda update -q conda
   - if exist "requirements.txt" conda info -a
-  - if exist "requirements.txt" conda create -q -n test-environment python=%PYTHON_VERSION% -f requirements.txt
+  - if exist "requirements.txt" conda create -q -n test-environment python="%PYTHON_VERSION%" -f requirements.txt
 
 cache: C:\RLibrary
 build_script: travis-tool.sh install_deps
