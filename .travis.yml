@@ -2,21 +2,19 @@ language: R
 sudo: no
 cache: packages
 
-python:
-  - "3.6"
-
 before_script:
   - fname=travis_helpers.sh
   - wget -O ${fname} http://bit.ly/travis_helpers
   - cat ${fname}; source ${fname}; rm ${fname}  
-  - version=3.6
-  - export TRAVIS_PYTHON_VERSION="${version}"
-  - PYENV_PATH_FILE='/etc/profile.d/pyenv.sh'
-  - echo 'export PATH=/opt/python/${version}/bin:$PATH' | sudo tee -a ${PYENV_PATH_FILE} &>/dev/null
-  - virtualenv="python${version}"  
-  - chmod +x ~/virtualenv/"${virtualenv}"/bin/activate
-  - source ~/virtualenv/"${virtualenv}"/bin/activate
-  - setup_python ${version} ;
+  - install_python_requirements ;
+  # - version=3.6
+  # - export TRAVIS_PYTHON_VERSION="${version}"
+  # - PYENV_PATH_FILE='/etc/profile.d/pyenv.sh'
+  # - echo 'export PATH=/opt/python/${version}/bin:$PATH' | sudo tee -a ${PYENV_PATH_FILE} &>/dev/null
+  # - virtualenv="python${version}"  
+  # - chmod +x ~/virtualenv/"${virtualenv}"/bin/activate
+  # - source ~/virtualenv/"${virtualenv}"/bin/activate
+  # - setup_python ${version} ;
 
 after_success: 
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; 
