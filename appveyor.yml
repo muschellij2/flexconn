@@ -21,7 +21,7 @@ install:
   - if exist "requirements.txt" conda update -q conda
   - if exist "requirements.txt" conda info -a
   - conda install -h
-  - if exist "requirements.txt" conda create -q -n test-environment python="%PYTHON_VERSION%" -f requirements.txt
+  - if exist "requirements.txt" conda create -q -n test-environment python="%PYTHON_VERSION%" --file requirements.txt
 
 cache: C:\RLibrary
 build_script: travis-tool.sh install_deps
