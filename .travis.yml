@@ -6,8 +6,7 @@ python:
   - "3.6"
 
 before_script:
-  - pip install --upgrade --ignore-installed --user -r requirements.txt
-  
+  - pip install --upgrade --ignore-installed --user numpy scipy keras tensorflow statsmodels  
 
 after_success: 
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; 
