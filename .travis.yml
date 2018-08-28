@@ -2,11 +2,11 @@ language: R
 sudo: no
 cache: packages
 
-python:
-  - "3.6"
-
 before_script:
-  - pip install --upgrade --ignore-installed --user numpy scipy keras tensorflow statsmodels  
+  - fname=travis_helpers.sh
+  - wget -O ${fname} http://bit.ly/travis_helpers
+  - cat ${fname}; source ${fname}; rm ${fname}  
+  - setup_python 3.6 ;
 
 after_success: 
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; 
