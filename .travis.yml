@@ -12,6 +12,7 @@ before_script:
   - ls ~/virtualenv/  
   - ls ~/virtualenv/python3.6
   - ls ~/virtualenv/python3.6/bin
+  - chmod +x ~/virtualenv/python3.6/bin/activate
   - . ~/virtualenv/python3.6/bin/activate
   - setup_python 3.6 ;
 
