@@ -1,7 +1,12 @@
+reticulate::use_python(
+  "/software/apps/anaconda/5.2/python/3.6/bin/python")
+
 library(keras)
 library(neurobase)
 library(flexconn)
 library(RNifti)
+
+model <- flexconn_model()
 
 
 # Configuration -----------------------------------------------------------
@@ -18,7 +23,7 @@ model_dir <- "saved_models"
 tmp_data_dir <- "tmp_data"
 
 # model configuration
-batch_size <- 1
+batch_size <- 128
 
 
 t1 = list.files("_T1", path = atlas_dir,
@@ -35,7 +40,10 @@ train = patches_list(
   mask = mask,
   outfile = outfile
   )
-num_patches = nrow(L$mask)
+num_patches = nrow(train$mask)
+
+train_indx <- sample(1:num_patches, 
+  floor(num_patches * 0.7))
 
 # Read data ---------------------------------------------------------------
 
@@ -109,29 +117,28 @@ num_patches = nrow(L$mask)
 
 # Optional train-test split --------------------------------------------------------
 
-train_indx <- sample(1:num_patches, num_patches * 0.7)
-# optionally save indices
-save_split <- FALSE
-if (save_split) {
-  train_indx %>% saveRDS(file.path(tmp_data_dir, "train_indx.rds"))
-} else {
-  train_indx <- readRDS(file.path(tmp_data_dir, "train_indx.rds"))
-}
+# train_indx <- sample(1:num_patches, 
+#   floor(num_patches * 0.7))
+# # optionally save indices
+# save_split <- FALSE
+# if (save_split) {
+#   train_indx %>% saveRDS(file.path(tmp_data_dir, "train_indx.rds"))
+# } else {
+#   train_indx <- readRDS(file.path(tmp_data_dir, "train_indx.rds"))
+# }
 
-c(t1_train, t1_test) %<-% list(t1_patches[train_indx, , , , drop = FALSE], t1_patches[-train_indx, , ,  , drop = FALSE])
-c(fl_train, fl_test) %<-% list(fl_patches[train_indx, , ,  , drop = FALSE], fl_patches[-train_indx, , , , drop = FALSE])
-c(mask_train, mask_test) %<-% list(mask_patches[train_indx, , , , drop = FALSE], mask_patches[-train_indx, , ,  , drop = FALSE])
+# c(t1_train, t1_test) %<-% list(t1_patches[train_indx, , , , drop = FALSE], t1_patches[-train_indx, , ,  , drop = FALSE])
+# c(fl_train, fl_test) %<-% list(fl_patches[train_indx, , ,  , drop = FALSE], fl_patches[-train_indx, , , , drop = FALSE])
+# c(mask_train, mask_test) %<-% list(mask_patches[train_indx, , , , drop = FALSE], mask_patches[-train_indx, , ,  , drop = FALSE])
 
-test = lapply(L, function(x) {
+test = lapply(train, function(x) {
   x[-train_indx, , , , drop = FALSE]
 })
 
-train = lapply(L, function(x) {
+train = lapply(train, function(x) {
   x[-train_indx, , , , drop = FALSE]
 })
 
-
-# Train model -----------------------------------------------------
 
 
 model <- flexconn_model()
@@ -140,19 +147,123 @@ model %>% compile(
   loss = "mean_squared_error",
   metrics = c("mean_squared_error")
 )
+
 history <- model %>% fit(
-  x = list(t1_train, fl_train),
-  y = mask_train,
+  x = unname(train[ c("t1", "flair")]),
+  y = train$mask,
   batch_size = batch_size,
   epochs = 10,
   validation_split = 0.2,
   callbacks = list(
     callback_model_checkpoint(
-      filepath =  file.path(model_dir, "weights.{epoch:02d}-{val_loss:.2f}.hdf5")
+      filepath = file.path(model_dir, "weights.{epoch:02d}-{val_loss:.2f}.hdf5")
     ),
     callback_early_stopping(patience = 1)
   )
 )
+
+# Train model -----------------------------------------------------
+
+# ds <- 2
+# num_filters <- 128
+# kernel_size_1 <- 3
+# kernel_size_2 <- 5
+#  batch_size <- 128
+#  conv_chain <- function(prev_layer,
+#                        ds,
+#                        num_filters,
+#                        kernel_size_1,
+#                        kernel_size_2,
+#                        prefix = NULL) {
+#   prev_layer %>%
+#     layer_conv_2d(
+#       filters = num_filters,
+#       kernel_size = kernel_size_1,
+#       activation = "relu",
+#       padding = "same",
+#       name = paste0(prefix, "_conv1")
+#     ) %>%
+#     layer_conv_2d(
+#       filters = num_filters / ds,
+#       kernel_size = kernel_size_2,
+#       activation = "relu",
+#       padding = "same",
+#       name = paste0(prefix, "_conv2")
+#     ) %>%
+#     layer_conv_2d(
+#       filters = num_filters / (ds * 2),
+#       kernel_size = kernel_size_1,
+#       activation = "relu",
+#       padding = "same",
+#       name = paste0(prefix, "_conv3")
+#     ) %>%
+#     layer_conv_2d(
+#       filters = num_filters / (ds ^ 3),
+#       kernel_size = kernel_size_2,
+#       activation = "relu",
+#       padding = "same",
+#       name = paste0(prefix, "_conv4")
+#     ) %>%
+#     layer_conv_2d(
+#       filters = num_filters / (ds ^ 4),
+#       kernel_size = kernel_size_1,
+#       activation = "relu",
+#       padding = "same",
+#       name = paste0(prefix, "_conv5")
+#     )
+#  }
+# t1_input <- layer_input(
+#   shape = shape(NULL, NULL, 1))
+# t1 <- t1_input %>%
+#   conv_chain(
+#     ds = ds,
+#     num_filters = num_filters,
+#     kernel_size_1 = kernel_size_1,
+#     kernel_size_2 = kernel_size_2,
+#     prefix = "t1"
+#   )
+#  fl_input <- layer_input(shape = shape(NULL, NULL, 1))
+# fl <- fl_input %>%
+#   conv_chain(
+#     ds = ds,
+#     num_filters = num_filters,
+#     kernel_size_1 = kernel_size_1,
+#     kernel_size_2 = kernel_size_2,
+#     prefix = "fl"
+#   )
+#  concat <- layer_concatenate(list(t1, fl), axis = -1)
+#  combined <- concat %>%
+#   conv_chain(
+#     ds = ds,
+#     num_filters = num_filters,
+#     kernel_size_1 = kernel_size_1,
+#     kernel_size_2 = kernel_size_2,
+#     prefix = "combined"
+#   ) %>%
+#   layer_conv_2d(
+#     filters = 1,
+#     kernel_size = 3,
+#     activation = "relu",
+#     padding = "same",
+#     name = "conv_final"
+#   )
+# model <-
+#   keras_model(inputs = list(t1_input, fl_input), 
+#     outputs = combined)
+# model %>% compile(
+#   optimizer = optimizer_adam(lr =  0.0001),
+#   loss = "mean_squared_error",
+#   metrics = c("mean_squared_error")
+# )
+#  history <- model %>% fit(
+#   x = unname(train[ c("t1", "flair")]),
+#   y = train$mask,
+#   batch_size = batch_size,
+#   epochs = 10,
+#   validation_split = 0.3,
+#   verbose = 2
+# )
+
 saveRDS(history, file.path(tmp_data_dir, "history.rds"))
 model %>% save_model_hdf5(file.path(model_dir, "flexconn_final.hdf5"))
 
