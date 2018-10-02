@@ -1,6 +1,7 @@
 library(keras)
 library(neurobase)
 library(flexconn)
+library(RNifti)
 
 ndim = 2
 run_model = flexconn_model(ndim = ndim)
@@ -15,8 +16,8 @@ run_model %>% compile(
 
 # Configuration -----------------------------------------------------------
 
-atlas_dir <- "lesion_challenge"
-n_atlas <- 21
+atlas_dir <- "lesion_challenge/atlas_with_mask1"
+n_atlas <- 5
 
 psize <- 35
 patchsize <- rep(psize, ndim)
@@ -37,9 +38,8 @@ batch_size <- 128
 
 num_patches <- 0
 for (i in 1:n_atlas) {
-  p <-
-    readnii(file.path(atlas_dir, paste0("atlas", i, "_mask.nii.gz")))
-  num_patches <- num_patches + img_data(p) %>% sum()
+  p <- readNifti(file.path(atlas_dir, paste0("atlas", i, "_mask.nii.gz")))
+  num_patches <- num_patches + sum(p)
 }
 
 cat("Total number of lesion patches =" , num_patches, "\n")
