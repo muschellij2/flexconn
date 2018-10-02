@@ -3,35 +3,22 @@ library(neurobase)
 library(flexconn)
 library(RNifti)
 
-ndim = 2
-run_model = flexconn_model(ndim = ndim)
-
-
-run_model %>% compile(
-  optimizer = optimizer_adam(lr =  0.0001),
-  loss = "mean_squared_error",
-  metrics = c("mean_squared_error")
-)
-
 
 # Configuration -----------------------------------------------------------
 
 atlas_dir <- "lesion_challenge/atlas_with_mask1"
 n_atlas <- 5
 
+ndim <- 2
 psize <- 35
 patchsize <- rep(psize, ndim)
 padsize = patchsize_to_padsize(patchsize = patchsize)
 
-model_exists <- TRUE
-
 model_dir <- "saved_models"
-# change this to use a model of your choice
-restore_path <- file.path(model_dir, "weights.05-51.56.hdf5")
 tmp_data_dir <- "tmp_data"
 
 # model configuration
-batch_size <- 128
+batch_size <- 1
 
 
 # Read data ---------------------------------------------------------------
@@ -121,55 +108,37 @@ c(mask_train, mask_test) %<-% list(mask_patches[train_indx, , , , drop = FALSE],
 
 
 
-# Train or load model -----------------------------------------------------
+# Train model -----------------------------------------------------
 
 
-if (!model_exists) {
-  model <- flexconn_model()
-  model %>% compile(
-    optimizer = optimizer_adam(lr =  0.0001),
-    loss = "mean_squared_error",
-    metrics = c("mean_squared_error")
+model <- flexconn_model()
+model %>% compile(
+  optimizer = optimizer_adam(lr =  0.0001),
+  loss = "mean_squared_error",
+  metrics = c("mean_squared_error")
+)
+history <- model %>% fit(
+  x = list(t1_train, fl_train),
+  y = mask_train,
+  batch_size = batch_size,
+  epochs = 10,
+  validation_split = 0.2,
+  callbacks = list(
+    callback_model_checkpoint(
+      filepath =  file.path(model_dir, "weights.{epoch:02d}-{val_loss:.2f}.hdf5")
+    ),
+    callback_early_stopping(patience = 1)
   )
-  history <- model %>% fit(
-    x = list(t1_train, fl_train),
-    y = mask_train,
-    batch_size = batch_size,
-    epochs = 10,
-    validation_split = 0.2,
-    callbacks = list(
-      callback_model_checkpoint(filepath = "weights.{epoch:02d}-{val_loss:.2f}.hdf5"),
-      callback_early_stopping(patience = 1)
-    )
-  )
-  saveRDS(history, file.path(tmp_data_dir, "history.rds"))
-} else {
-  model <- load_model_hdf5(restore_path)
-  history <- readRDS(file.path(tmp_data_dir, "history.rds"))
-}
+)
+saveRDS(history, file.path(tmp_data_dir, "history.rds"))
+model %>% save_model_hdf5(file.path(model_dir, "flexconn_final.hdf5"))
 
 
 # Evaluate model ----------------------------------------------------------
 
-
 plot(history, metrics = "loss")
 
-# model %>% evaluate(x = list(t1_test,
-#                             fl_test),
-#                    y = mask_test,
-#                    batch_size = 1)
-
-
-
-# Get predictions ---------------------------------------------------------
-
-test_fl <- system.file("extdata/FLAIR.nii.gz", package = "flexconn")
-test_t1 <-
-  system.file("extdata/MPRAGE.nii.gz", package = "flexconn")
-
-predicted <- model %>% flexconn_predict(t1 = test_t1,
-                                        flair = test_fl,
-                                        patchsize = c(35, 35))
-
-
-image(predicted, z = 100, plot.type = "single")
+model %>% evaluate(x = list(t1_test,
+                            fl_test),
+                   y = mask_test,
+                   batch_size = 1)
