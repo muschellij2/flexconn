@@ -44,7 +44,7 @@ patches_list = function(
 
   if (!is.null(outfile)) {
     if (file.exists(outfile)) {
-      all_arrays = readr::read_rds(outfile)
+      all_arrays = readRDS(outfile)
       attr(all_arrays, "outfile") = outfile
       return(all_arrays)
     }
@@ -70,6 +70,7 @@ patches_list = function(
   lengths = sapply(L, length)
   stopifnot(length(unique(lengths)) == 1)
 
+  n_atlas = unique(lengths)
 
   masks = lapply(L$mask, RNifti::readNifti)
   mask_num_patches = sapply(masks, sum)
@@ -161,9 +162,9 @@ patches_list = function(
 
 
   if (!is.null(outfile)) {
-    readr::write_rds(
+    saveRDS(
       all_arrays,
-      path = outfile,
+      file = outfile,
       compress = "xz")
     attr(all_arrays, "outfile") = outfile
   }
