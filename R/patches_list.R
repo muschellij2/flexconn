@@ -44,6 +44,9 @@ patches_list = function(
 
   if (!is.null(outfile)) {
     if (file.exists(outfile)) {
+      if (verbose) {
+        message("Reading Data from to output file")
+      }
       all_arrays = readRDS(outfile)
       attr(all_arrays, "outfile") = outfile
       return(all_arrays)
@@ -162,6 +165,9 @@ patches_list = function(
 
 
   if (!is.null(outfile)) {
+    if (verbose) {
+      message("Writing Data out to output file")
+    }
     saveRDS(
       all_arrays,
       file = outfile,

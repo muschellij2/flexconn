@@ -131,6 +131,8 @@ get_patches <- function(
 #' if (user == "johnmuschelli") {
 #' reticulate::use_python(paste0(
 #' "/Library/Frameworks/Python.framework/Versions/3.5/bin/python3"))
+#' mpl = reticulate::import("matplotlib")
+#' mpl$use('TkAgg')
 #' }
 #' library(neurobase)
 #' fname = system.file("extdata", "MPRAGE.nii.gz", package = "flexconn")

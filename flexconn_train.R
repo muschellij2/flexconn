@@ -21,6 +21,20 @@ tmp_data_dir <- "tmp_data"
 batch_size <- 1
 
 
+t1 = list.files("_T1", path = atlas_dir,
+  full.names = TRUE)
+flair = list.files("_FL", path = atlas_dir,
+  full.names = TRUE)
+mask = list.files("_mask", path = atlas_dir,
+  full.names = TRUE)
+
+L = patches_list(
+  t1 = t1, 
+  flair = flair, 
+  mask = mask,
+  outfile = file.path(tmp_data_dir, "patches.rds"))
+
+
 # Read data ---------------------------------------------------------------
 
 num_patches <- 0
