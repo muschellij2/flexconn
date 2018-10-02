@@ -20,7 +20,9 @@
 #' @examples
 #' user = Sys.getenv("USER")
 #' if (user == "johnmuschelli") {
-#'   setwd("/Volumes/DATA_LOCAL/Projects/ms_lesion_challenge/atlases/none")
+#' data_dir = "/Volumes/DATA_LOCAL/Projects/ms_lesion_challenge/atlases/none"
+#'   if (dir.exists(data_dir)) {
+#'   setwd(data_dir)
 #'   reticulate::use_python(paste0(
 #'    "/Library/Frameworks/Python.framework/Versions/3.5/bin/python3"))
 #'    i = 1:5
@@ -32,6 +34,7 @@
 #' patchsize = c(35, 35)
 #' outfile = NULL
 #' write_file = TRUE
+#' }
 #' }
 patches_list = function(
   t1, flair, mask,
@@ -74,6 +77,9 @@ patches_list = function(
   stopifnot(length(unique(lengths)) == 1)
 
   n_atlas = unique(lengths)
+  if (n_atlas == 0) {
+    stop("No data was input into the model")
+  }
 
   masks = lapply(L$mask, RNifti::readNifti)
   mask_num_patches = sapply(masks, sum)

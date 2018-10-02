@@ -28,81 +28,83 @@ flair = list.files("_FL", path = atlas_dir,
 mask = list.files("_mask", path = atlas_dir,
   full.names = TRUE)
 
-L = patches_list(
+outfile = file.path(tmp_data_dir, "patches.rds")
+train = patches_list(
   t1 = t1, 
   flair = flair, 
   mask = mask,
-  outfile = file.path(tmp_data_dir, "patches.rds"))
-
+  outfile = outfile
+  )
+num_patches = nrow(L$mask)
 
 # Read data ---------------------------------------------------------------
 
-num_patches <- 0
-for (i in 1:n_atlas) {
-  p <- readNifti(file.path(atlas_dir, paste0("atlas", i, "_mask.nii.gz")))
-  num_patches <- num_patches + sum(p)
-}
+# num_patches <- 0
+# for (i in 1:n_atlas) {
+#   p <- readNifti(file.path(atlas_dir, paste0("atlas", i, "_mask.nii.gz")))
+#   num_patches <- num_patches + sum(p)
+# }
 
-cat("Total number of lesion patches =" , num_patches, "\n")
+# cat("Total number of lesion patches =" , num_patches, "\n")
 
-matsize = get_matsize(num_patches, patchsize)
+# matsize = get_matsize(num_patches, patchsize)
 
-t1_patches <- array(0, dim = matsize)
-fl_patches <- array(0, dim = matsize)
-mask_patches <- array(0, dim = matsize)
+# t1_patches <- array(0, dim = matsize)
+# fl_patches <- array(0, dim = matsize)
+# mask_patches <- array(0, dim = matsize)
 
-count2 <- 1
-count1 <- 1
+# count2 <- 1
+# count1 <- 1
 
-for (i in 1:n_atlas) {
-  t1name <- file.path(atlas_dir, paste0("atlas", i, "_T1.nii.gz"))
-  cat("Reading", t1name, "\n")
-  t1 <- readnii(t1name) %>% img_data()
-  flname <- file.path(atlas_dir, paste0("atlas", i, "_FL.nii.gz"))
-  cat("Reading", flname, "\n")
-  fl <- readnii(flname) %>% img_data()
-  maskname <-
-    file.path(atlas_dir, paste0("atlas", i, "_mask.nii.gz"))
-  cat("Reading", maskname, "\n")
-  mask <- readnii(maskname) %>% img_data()
+# for (i in 1:n_atlas) {
+#   t1name <- file.path(atlas_dir, paste0("atlas", i, "_T1.nii.gz"))
+#   cat("Reading", t1name, "\n")
+#   t1 <- readnii(t1name) %>% img_data()
+#   flname <- file.path(atlas_dir, paste0("atlas", i, "_FL.nii.gz"))
+#   cat("Reading", flname, "\n")
+#   fl <- readnii(flname) %>% img_data()
+#   maskname <-
+#     file.path(atlas_dir, paste0("atlas", i, "_mask.nii.gz"))
+#   cat("Reading", maskname, "\n")
+#   mask <- readnii(maskname) %>% img_data()
 
-  c(t1_patches_a, fl_patches_a, mask_patches_a) %<-%
-    get_patches(
-      t1 = t1,
-      fl = fl,
-      mask = mask,
-      patchsize = patchsize,
-      normalize = TRUE,
-      pad = TRUE,
-      only_patches = TRUE
-    )
+#   c(t1_patches_a, fl_patches_a, mask_patches_a) %<-%
+#     get_patches(
+#       t1 = t1,
+#       fl = fl,
+#       mask = mask,
+#       patchsize = patchsize,
+#       normalize = TRUE,
+#       pad = TRUE,
+#       only_patches = TRUE
+#     )
 
-  cat("Dim of T1 patches:", dim(t1_patches_a), "\n")
+#   cat("Dim of T1 patches:", dim(t1_patches_a), "\n")
 
-  pdim <- nrow(t1_patches_a)
-  if (pdim > 0) {
-    count2 <- count1 + pdim - 1
-    cat("Atlas", i, "indices:", count1, count2, "\n")
+#   pdim <- nrow(t1_patches_a)
+#   if (pdim > 0) {
+#     count2 <- count1 + pdim - 1
+#     cat("Atlas", i, "indices:", count1, count2, "\n")
 
-    if (ndim == 2) {
-      t1_patches[count1:count2, , ,] <- t1_patches_a
-      fl_patches[count1:count2, , ,] <- fl_patches_a
-      mask_patches[count1:count2, , ,] <- mask_patches_a
-    }
+#     if (ndim == 2) {
+#       t1_patches[count1:count2, , ,] <- t1_patches_a
+#       fl_patches[count1:count2, , ,] <- fl_patches_a
+#       mask_patches[count1:count2, , ,] <- mask_patches_a
+#     }
 
-    if (ndim == 3) {
-      t1_patches[count1:count2, , , ,] <- t1_patches_a
-      fl_patches[count1:count2, , , ,] <- fl_patches_a
-      mask_patches[count1:count2, , , ,] <- mask_patches_a
-    }
+#     if (ndim == 3) {
+#       t1_patches[count1:count2, , , ,] <- t1_patches_a
+#       fl_patches[count1:count2, , , ,] <- fl_patches_a
+#       mask_patches[count1:count2, , , ,] <- mask_patches_a
+#     }
 
-    count1 <- count1 + pdim
-  }
+#     count1 <- count1 + pdim
+#   }
 
-}
+# }
 
-cat("Total number of patches collected = ", count2, "\n")
-cat("Size of the input matrix is ", dim(mask_patches), "\n")
+# cat("Total number of patches collected = ", count2, "\n")
+# cat("Size of the input matrix is ", dim(mask_patches), "\n")
 
 
 # Optional train-test split --------------------------------------------------------
@@ -120,6 +122,13 @@ c(t1_train, t1_test) %<-% list(t1_patches[train_indx, , , , drop = FALSE], t1_pa
 c(fl_train, fl_test) %<-% list(fl_patches[train_indx, , ,  , drop = FALSE], fl_patches[-train_indx, , , , drop = FALSE])
 c(mask_train, mask_test) %<-% list(mask_patches[train_indx, , , , drop = FALSE], mask_patches[-train_indx, , ,  , drop = FALSE])
 
+test = lapply(L, function(x) {
+  x[-train_indx, , , , drop = FALSE]
+})
+
+train = lapply(L, function(x) {
+  x[-train_indx, , , , drop = FALSE]
+})
 
 
 # Train model -----------------------------------------------------

@@ -36,7 +36,9 @@ Make a patches list for a population of images
 \examples{
 user = Sys.getenv("USER")
 if (user == "johnmuschelli") {
-  setwd("/Volumes/DATA_LOCAL/Projects/ms_lesion_challenge/atlases/none")
+data_dir = "/Volumes/DATA_LOCAL/Projects/ms_lesion_challenge/atlases/none"
+  if (dir.exists(data_dir)) {
+  setwd(data_dir)
   reticulate::use_python(paste0(
    "/Library/Frameworks/Python.framework/Versions/3.5/bin/python3"))
    i = 1:5
@@ -48,5 +50,6 @@ verbose = TRUE
 patchsize = c(35, 35)
 outfile = NULL
 write_file = TRUE
+}
 }
 }
