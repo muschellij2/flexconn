@@ -5,12 +5,12 @@ Version: 0.5.1
 Authors@R: 
     c(person(given = "John",
            family = "Muschelli",
-           role = c("aut"),
+           role = c("aut", "cre"),
            email = "muschellij2@gmail.com",
            comment = c(ORCID = "0000-0001-6469-1750")),
       person(given = "Sigrid",
            family = "Keydana",
-           role = c("aut", "cre"),
+           role = c("aut"),
            email = "sigrid@rstudio.com")
            )
 Description: FLEXCONN model for multiple sclerosis lesion segmentation 
