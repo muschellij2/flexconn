@@ -6,8 +6,6 @@ library(neurobase)
 library(flexconn)
 library(RNifti)
 
-model <- flexconn_model()
-
 
 # Configuration -----------------------------------------------------------
 
@@ -35,14 +33,14 @@ mask = list.files("_mask", path = atlas_dir,
 
 outfile = file.path(tmp_data_dir, "patches.rds")
 train = patches_list(
-  t1 = t1, 
-  flair = flair, 
+  t1 = t1,
+  flair = flair,
   mask = mask,
   outfile = outfile
   )
 num_patches = nrow(train$mask)
 
-train_indx <- sample(1:num_patches, 
+train_indx <- sample(1:num_patches,
   floor(num_patches * 0.7))
 
 # Read data ---------------------------------------------------------------
@@ -117,7 +115,7 @@ train_indx <- sample(1:num_patches,
 
 # Optional train-test split --------------------------------------------------------
 
-# train_indx <- sample(1:num_patches, 
+# train_indx <- sample(1:num_patches,
 #   floor(num_patches * 0.7))
 # # optionally save indices
 # save_split <- FALSE
@@ -136,7 +134,7 @@ test = lapply(train, function(x) {
 })
 
 train = lapply(train, function(x) {
-  x[-train_indx, , , , drop = FALSE]
+  x[train_indx, , , , drop = FALSE]
 })
 
 
@@ -149,7 +147,7 @@ model %>% compile(
 )
 
 history <- model %>% fit(
-  x = unname(train[ c("t1", "flair")]),
+  x = unname(train[ c("t1", "fl")]),
   y = train$mask,
   batch_size = batch_size,
   epochs = 10,
@@ -248,7 +246,7 @@ history <- model %>% fit(
 #     name = "conv_final"
 #   )
 # model <-
-#   keras_model(inputs = list(t1_input, fl_input), 
+#   keras_model(inputs = list(t1_input, fl_input),
 #     outputs = combined)
 # model %>% compile(
 #   optimizer = optimizer_adam(lr =  0.0001),
