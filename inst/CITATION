@@ -1,0 +1,12 @@
+structure(list(roy2018multiple = structure(list(title = "Multiple Sclerosis Lesion Segmentation from Brain MRI via Fully Convolutional Neural Networks", 
+    author = structure(list(list(given = "Snehashis", family = "Roy", 
+        role = NULL, email = NULL, comment = NULL), list(given = c("John", 
+    "A"), family = "Butman", role = NULL, email = NULL, comment = NULL), 
+        list(given = c("Daniel", "S"), family = "Reich", role = NULL, 
+            email = NULL, comment = NULL), list(given = c("Peter", 
+        "A"), family = "Calabresi", role = NULL, email = NULL, 
+            comment = NULL), list(given = c("Dzung", "L"), family = "Pham", 
+            role = NULL, email = NULL, comment = NULL)), class = "person"), 
+    journal = "arXiv preprint arXiv:1803.09172", year = "2018"), bibtype = "Article", key = "roy2018multiple")), class = "bibentry", strings = structure(character(0), .Names = character(0)))
+
+    
