@@ -22,7 +22,7 @@
 #' if (user == "johnmuschelli") {
 #' data_dir = "/Volumes/DATA_LOCAL/Projects/ms_lesion_challenge/atlases/none"
 #'   if (dir.exists(data_dir)) {
-#'   setwd(data_dir)
+#'
 #'   reticulate::use_python(paste0(
 #'    "/Library/Frameworks/Python.framework/Versions/3.5/bin/python3"))
 #'    i = 1:5
@@ -30,6 +30,9 @@
 #' flair = paste0("atlas", i, "_FL.nii.gz")
 #' t2 = NULL
 #' mask = paste0("atlas", i, "_mask.nii.gz")
+#' t1 = file.path(data_dir, t1)
+#' flair = file.path(data_dir, flair)
+#' mask = file.path(data_dir, mask)
 #' verbose = TRUE
 #' patchsize = c(35, 35)
 #' outfile = NULL
@@ -102,7 +105,7 @@ patches_list = function(
 
   i = 1
   if (verbose) {
-    pb = txtProgressBar(min = 1, max = n_atlas)
+    pb = txtProgressBar(min = 0, max = n_atlas)
   }
   for (i in seq(n_atlas)) {
 

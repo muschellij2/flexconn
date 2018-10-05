@@ -198,7 +198,7 @@ flexconn_predict_with_volume = function(
     n_slices = dims[3]
     k = n_slices
     if (verbose) {
-      pb = txtProgressBar(min = 1, max = n_slices)
+      pb = txtProgressBar(min = 0, max = n_slices)
     }
     for (k in seq(n_slices)) {
       slice_2d_t1[1, , , 1] = t1[, , k]
