@@ -1,5 +1,5 @@
-reticulate::use_python(
-  "/software/apps/anaconda/5.2/python/3.6/bin/python")
+# reticulate::use_python(
+#   "/software/apps/anaconda/5.2/python/3.6/bin/python")
 
 library(keras)
 library(neurobase)
@@ -10,7 +10,7 @@ library(RNifti)
 # Configuration -----------------------------------------------------------
 
 atlas_dir <- "lesion_challenge/atlas_with_mask1"
-n_atlas <- 21
+n_atlas <- 1
 
 ndim <- 2
 psize <- 35
@@ -32,6 +32,10 @@ flair = list.files("_FL", path = atlas_dir,
 mask = list.files("_mask", path = atlas_dir,
   full.names = TRUE)
 
+t1 = t1[seq(n_atlas)]
+flair = flair[seq(n_atlas)]
+mask = mask[seq(n_atlas)]
+
 outfile = file.path(tmp_data_dir,
   paste0("patches_", n_atlas, ".rds"))
 train = patches_list(
@@ -44,8 +48,6 @@ num_patches = nrow(train$mask)
 
 
 # Optional train-test split --------------------------------------------------------
-mask = train$mask
-
 train_indx <- sample(1:num_patches,
   floor(num_patches * 0.7))
 
@@ -58,9 +60,6 @@ train = lapply(train, function(x) {
   x[train_indx, , , , drop = FALSE]
 })
 
-test_mask = mask[-train_indx, , , , drop = FALSE]
-mask = mask[train_indx, , , , drop = FALSE]
-
 # Train model -----------------------------------------------------
 
 model <- flexconn_model()
@@ -72,7 +71,7 @@ model %>% compile(
 
 history <- model %>% fit(
   x = unname(train[ c("t1", "fl")]),
-  y = mask,
+  y = train$mask,
   batch_size = batch_size,
   epochs = 10,
   validation_split = 0.2,
@@ -98,6 +97,7 @@ png("model_history.png")
 plot(history, metrics = "loss")
 dev.off()
 
-model %>% evaluate(x = test,
-                   y = test_mask,
-                   batch_size = 1)
+model %>% 
+evaluate(x = unname(test[ c("t1", "fl")]),
+         y = test$mask,
+         batch_size = 1)
