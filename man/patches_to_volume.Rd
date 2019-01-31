@@ -35,7 +35,8 @@ Convert Patches to a Volume
 }
 \examples{
 user = Sys.getenv("USER")
-if (user \%in\% c("johnmuschelli", "travis")) {
+if (user \%in\% c("johnmuschelli", "travis") &
+Sys.info()["sysname"] == "Darwin"){
 reticulate::use_python(paste0(
 "/Library/Frameworks/Python.framework/Versions/3.5/bin/python3"))
 }

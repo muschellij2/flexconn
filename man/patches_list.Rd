@@ -35,7 +35,8 @@ Make a patches list for a population of images
 }
 \examples{
 user = Sys.getenv("USER")
-if (user \%in\% c("johnmuschelli", "travis")) {
+if (user \%in\% c("johnmuschelli", "travis") &
+Sys.info()["sysname"] == "Darwin"){
 data_dir = "/Volumes/DATA_LOCAL/Projects/ms_lesion_challenge/atlases/none"
   if (dir.exists(data_dir)) {
 
