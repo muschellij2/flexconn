@@ -4,8 +4,8 @@
 \alias{patches_list}
 \title{Make a patches list for a population of images}
 \usage{
-patches_list(t1, flair, mask, t2 = NULL, patchsize = c(35, 35),
-  verbose = TRUE, outfile = NULL, write_file = TRUE, ...)
+patches_list(t1, flair = NULL, mask, t2 = NULL, patchsize = c(35,
+  35), verbose = TRUE, outfile = NULL, write_file = TRUE, ...)
 }
 \arguments{
 \item{t1}{a character vector of filenames for T1 images}

@@ -2,6 +2,10 @@ language: R
 sudo: no
 cache: packages
 
+os:
+  - linux
+  - osx
+  
 before_script:
   - fname=travis_helpers.sh
   - wget -O ${fname} http://bit.ly/travis_helpers

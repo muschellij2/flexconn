@@ -7,10 +7,10 @@ library(flexconn)
 library(RNifti)
 
 
-# Configuration -----------------------------------------------------------
+# Configuration -----------------------
 
 atlas_dir <- "lesion_challenge/atlas_with_mask1"
-n_atlas <- 1
+n_atlas <- 21
 
 ndim <- 2
 psize <- 35
@@ -24,7 +24,7 @@ tmp_data_dir <- "tmp_data"
 batch_size <- 512
 
 
-# Read data ---------------------------------------------------------------
+# Read data -------------------------------
 t1 = list.files("_T1", path = atlas_dir,
   full.names = TRUE)
 flair = list.files("_FL", path = atlas_dir,
@@ -47,7 +47,7 @@ train = patches_list(
 num_patches = nrow(train$mask)
 
 
-# Optional train-test split --------------------------------------------------------
+# Optional train-test split --------------------------
 train_indx <- sample(1:num_patches,
   floor(num_patches * 0.7))
 
@@ -60,7 +60,7 @@ train = lapply(train, function(x) {
   x[train_indx, , , , drop = FALSE]
 })
 
-# Train model -----------------------------------------------------
+# Train model --------------------------------------
 
 model <- flexconn_model()
 model %>% compile(
@@ -77,21 +77,23 @@ history <- model %>% fit(
   validation_split = 0.2,
   callbacks = list(
     callback_model_checkpoint(
-      filepath = file.path(model_dir, "weights.{epoch:02d}-{val_loss:.2f}.hdf5")
+      filepath = file.path(model_dir, 
+        "weights.{epoch:02d}-{val_loss:.2f}.hdf5")
     ),
     callback_early_stopping(patience = 1)
   )
 )
 
 
-saveRDS(history, file.path(tmp_data_dir, "history.rds"))
+saveRDS(history, 
+  file.path(tmp_data_dir, "history.rds"))
 model %>%
   save_model_hdf5(
     file.path(model_dir,
       "flexconn_final.hdf5"))
 
 
-# Evaluate model ----------------------------------------------------------
+# Evaluate model -----------------------
 
 png("model_history.png")
 plot(history, metrics = "loss")

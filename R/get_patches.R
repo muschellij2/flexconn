@@ -24,6 +24,11 @@
 #'
 #' @importFrom reticulate import
 #' @examples
+#' user = Sys.getenv("USER")
+#' if (user == "johnmuschelli") {
+#' reticulate::use_python(paste0(
+#' "/Library/Frameworks/Python.framework/Versions/3.5/bin/python3"))
+#' }
 #' library(neurobase)
 #' fname = system.file("extdata", "MPRAGE.nii.gz", package = "flexconn")
 #' t1 = readnii(fname)
@@ -35,7 +40,7 @@
 #'
 #' rm(patch)
 get_patches <- function(
-  t1, flair, t2 = NULL,
+  t1, flair = NULL, t2 = NULL,
   mask = NULL, patchsize,
   pad = TRUE,
   normalize = TRUE,
@@ -58,19 +63,23 @@ get_patches <- function(
     contrast = "T1",
     pad = pad,
     seed = seed,
-    run_mask_patches = FALSE,
-    ...)
-  t1_patches = t1_patches$image_patches
-  fl_patches = get_patch_from_volume(
-    flair, mask = mask,
-    patchsize = patchsize,
-    verbose = verbose,
-    normalize = normalize,
-    contrast = "FLAIR",
-    pad = pad,
-    seed = seed,
     run_mask_patches = TRUE,
     ...)
+  mask_patches = t1_patches$mask_patches
+  t1_patches = t1_patches$image_patches
+  fl_patches = NULL
+  if (!is.null(flair)) {
+    fl_patches = get_patch_from_volume(
+      flair, mask = mask,
+      patchsize = patchsize,
+      verbose = verbose,
+      normalize = normalize,
+      contrast = "FLAIR",
+      pad = pad,
+      seed = seed,
+      run_mask_patches = FALSE,
+      ...)
+  }
 
   t2_patches = NULL
   if (!is.null(t2)) {
@@ -86,10 +95,10 @@ get_patches <- function(
       ...)
   }
   L = list(
-    t1_patches = t1_patches,
-    fl_patches = fl_patches$image_patches,
-    mask_patches = fl_patches$mask_patches
+    t1_patches = t1_patches
   )
+  L$fl_patches = fl_patches$image_patches
+  L$mask_patches = mask_patches
   L$t2_patches = t2_patches
 
   if (!only_patches) {
@@ -155,7 +164,7 @@ get_patch_from_volume <- function(
   seed = NULL,
   run_mask_patches = TRUE,
   peak_estimator = c("Python", "R")
-  ) {
+) {
 
   ndim = length(patchsize)
   if (!ndim %in% c(2, 3)) {

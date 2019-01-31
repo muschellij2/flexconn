@@ -40,7 +40,7 @@
 #' }
 #' }
 patches_list = function(
-  t1, flair, mask,
+  t1, flair = NULL, mask,
   t2 = NULL,
   patchsize = c(35, 35),
   verbose = TRUE,
@@ -173,7 +173,7 @@ patches_list = function(
   }
 
 
-  if (!is.null(outfile)) {
+  if (write_file) {
     if (verbose) {
       message("Writing Data out to output file")
     }

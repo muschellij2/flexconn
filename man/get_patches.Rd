@@ -4,9 +4,9 @@
 \alias{get_patches}
 \title{Get Patches from T1 and FLAIR image}
 \usage{
-get_patches(t1, flair, t2 = NULL, mask = NULL, patchsize, pad = TRUE,
-  normalize = TRUE, verbose = TRUE, only_patches = FALSE,
-  seed = NULL, ...)
+get_patches(t1, flair = NULL, t2 = NULL, mask = NULL, patchsize,
+  pad = TRUE, normalize = TRUE, verbose = TRUE,
+  only_patches = FALSE, seed = NULL, ...)
 }
 \arguments{
 \item{t1}{3D array or \code{nifti} image}
@@ -46,6 +46,11 @@ If \code{mask = NULL}, a mask will be created based on
 voxels greater than the 75th percentile of the FLAIR image.
 }
 \examples{
+user = Sys.getenv("USER")
+if (user == "johnmuschelli") {
+reticulate::use_python(paste0(
+"/Library/Frameworks/Python.framework/Versions/3.5/bin/python3"))
+}
 library(neurobase)
 fname = system.file("extdata", "MPRAGE.nii.gz", package = "flexconn")
 t1 = readnii(fname)
