@@ -11,7 +11,7 @@ before_script:
   - wget -O ${fname} http://bit.ly/travis_helpers
   - cat ${fname}; source ${fname}; rm ${fname}
   - export TRAVIS_PYTHON_VERSION=3.5;
-  - source "~/virtualenv/python${TRAVIS_PYTHON_VERSION}_with_system_site_packages/bin/activate" ;
+  - setup_python ${TRAVIS_PYTHON_VERSION} ;
   - if [ "$TRAVIS_OS_NAME" == "osx" ];
     then
       echo $USER ;
