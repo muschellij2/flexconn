@@ -1,3 +1,4 @@
+^flexconn_train\.sh$
 ^flexconn_test\.R$
 ^flexconn_train\.R$
 ^requirements\.txt$
