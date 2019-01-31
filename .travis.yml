@@ -5,6 +5,8 @@ cache: packages
 os:
   - linux
   - osx
+
+python: 3.6
   
 before_script:
   - fname=travis_helpers.sh
@@ -13,7 +15,8 @@ before_script:
   - install_python_requirements ;
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; 
     then 
-    ls /Library/Frameworks/Python.framework/Versions/
+      ls /Library/Frameworks/Python.framework/Versions/;
+      export $CI_PYTHON_VERSION=$TRAVIS_PYTHON_VERSION; 
     fi
   # - version=3.6
   # - export TRAVIS_PYTHON_VERSION="${version}"
