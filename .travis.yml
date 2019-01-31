@@ -1,5 +1,4 @@
 language: R
-sudo: no
 cache: packages
 
 os:
