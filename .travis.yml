@@ -16,7 +16,7 @@ before_script:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; 
     then 
       ls /Library/Frameworks/Python.framework/Versions/;
-      export $CI_PYTHON_VERSION=$TRAVIS_PYTHON_VERSION; 
+      export CI_PYTHON_VERSION=$TRAVIS_PYTHON_VERSION; 
     fi
   # - version=3.6
   # - export TRAVIS_PYTHON_VERSION="${version}"
