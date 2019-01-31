@@ -15,6 +15,7 @@ before_script:
   - install_python_requirements ;
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; 
     then 
+      echo $USER ;
       ls /Library/Frameworks/Python.framework/Versions/;
       export CI_PYTHON_VERSION=$TRAVIS_PYTHON_VERSION; 
     fi
