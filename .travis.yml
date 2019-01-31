@@ -12,13 +12,11 @@ before_script:
   - cat ${fname}; source ${fname}; rm ${fname}
   - export TRAVIS_PYTHON_VERSION=3.5;
   - setup_python ${TRAVIS_PYTHON_VERSION} ;
+  - x=`which python` ; echo ${x} ;
+  - x=`which python3` ;  echo ${x} ;  
   - if [ "$TRAVIS_OS_NAME" == "osx" ];
     then
       echo $USER ;
-      x=`which python` ;
-      echo ${x} ;
-      x=`which python3` ;
-      echo ${x} ;
       ls /Library/Frameworks/Python.framework/Versions/;
       echo 
       export CI_PYTHON_VERSION=$TRAVIS_PYTHON_VERSION;
