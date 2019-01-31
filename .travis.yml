@@ -11,6 +11,10 @@ before_script:
   - wget -O ${fname} http://bit.ly/travis_helpers
   - cat ${fname}; source ${fname}; rm ${fname}  
   - install_python_requirements ;
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; 
+    then 
+    ls /Library/Frameworks/Python.framework/Versions/
+    fi
   # - version=3.6
   # - export TRAVIS_PYTHON_VERSION="${version}"
   # - PYENV_PATH_FILE='/etc/profile.d/pyenv.sh'
