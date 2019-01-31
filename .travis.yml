@@ -12,6 +12,8 @@ before_script:
   - fname=travis_helpers.sh
   - wget -O ${fname} http://bit.ly/travis_helpers
   - cat ${fname}; source ${fname}; rm ${fname}
+  - echo ${TRAVIS_PYTHON_VERSION};
+  - source "~/virtualenv/python${TRAVIS_PYTHON_VERSION}_with_system_site_packages/bin/activate" ;
   - if [ "$TRAVIS_OS_NAME" == "osx" ];
     then
       echo $USER ;
@@ -20,6 +22,7 @@ before_script:
       x=`which python3` ;
       echo ${x} ;
       ls /Library/Frameworks/Python.framework/Versions/;
+      echo 
       export CI_PYTHON_VERSION=$TRAVIS_PYTHON_VERSION;
     fi
   - install_python_requirements ;
