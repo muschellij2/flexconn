@@ -19,7 +19,7 @@
 #'
 #' @examples
 #' user = Sys.getenv("USER")
-#' if (user == "johnmuschelli") {
+#' if (user %in% c("johnmuschelli", "travis")) {
 #' data_dir = "/Volumes/DATA_LOCAL/Projects/ms_lesion_challenge/atlases/none"
 #'   if (dir.exists(data_dir)) {
 #'

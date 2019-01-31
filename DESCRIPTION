@@ -36,4 +36,4 @@ Encoding: UTF-8
 LazyData: true
 URL: https://github.com/muschellij2/flexconn
 BugReports: https://github.com/muschellij2/flexconn/issues
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1

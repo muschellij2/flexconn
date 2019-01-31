@@ -11,7 +11,8 @@ environment:
     WARNINGS_ARE_ERRORS: 1.0
     USE_RTOOLS: yes
     R_CHECK_INSTALL_ARGS: --install-args=--build --no-multiarch
-    PYTHON_VERSION: 3.6
+    PYTHON_VERSION: 3.5
+    CI_PYTHON_VERSION: 3.5
     MINICONDA: C:\Miniconda3-x64
 
 install:

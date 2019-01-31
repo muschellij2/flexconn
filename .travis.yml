@@ -6,7 +6,7 @@ os:
   - linux
   - osx
 
-python: 3.6
+python: 3.5
   
 before_script:
   - fname=travis_helpers.sh

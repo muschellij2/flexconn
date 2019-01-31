@@ -21,7 +21,7 @@ Remove connected objects with volume <27 voxels
 }
 \examples{
 user = Sys.getenv("USER")
-if (user == "johnmuschelli") {
+if (user \%in\% c("johnmuschelli", "travis")) {
 reticulate::use_python(paste0(
 "/Library/Frameworks/Python.framework/Versions/3.5/bin/python3"))
 }
