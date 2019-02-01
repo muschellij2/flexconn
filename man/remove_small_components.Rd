@@ -27,6 +27,7 @@ reticulate::use_python(
 "/Library/Frameworks/Python.framework/Versions/3.5/bin/python3")
 } else {
 python = system("which python", intern = TRUE)
+print(python)
 reticulate::use_python(python)
 }
 set.seed(100)

@@ -25,6 +25,7 @@
 #'    "/Library/Frameworks/Python.framework/Versions/3.5/bin/python3"))
 #' } else {
 #' python = system("which python", intern = TRUE)
+#' print(python)
 #' reticulate::use_python(python)
 #' }
 #' data_dir = "/Volumes/DATA_LOCAL/Projects/ms_lesion_challenge/atlases/none"
