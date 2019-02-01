@@ -23,8 +23,11 @@ Remove connected objects with volume <27 voxels
 user = Sys.getenv("USER")
 if (user \%in\% c("johnmuschelli", "travis") &
 Sys.info()["sysname"] == "Darwin"){
-reticulate::use_python(paste0(
-"/Library/Frameworks/Python.framework/Versions/3.5/bin/python3"))
+reticulate::use_python(
+"/Library/Frameworks/Python.framework/Versions/3.5/bin/python3")
+} else {
+python = system("which python", intern = TRUE)
+reticulate::use_python(python)
 }
 set.seed(100)
 d = rep(50, 3)

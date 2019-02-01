@@ -21,11 +21,16 @@
 #' user = Sys.getenv("USER")
 #' if (user %in% c("johnmuschelli", "travis") &
 #' Sys.info()["sysname"] == "Darwin"){
+#'   reticulate::use_python(paste0(
+#'    "/Library/Frameworks/Python.framework/Versions/3.5/bin/python3"))
+#' } else {
+#' python = system("which python", intern = TRUE)
+#' reticulate::use_python(python)
+#' }
 #' data_dir = "/Volumes/DATA_LOCAL/Projects/ms_lesion_challenge/atlases/none"
 #'   if (dir.exists(data_dir)) {
 #'
-#'   reticulate::use_python(paste0(
-#'    "/Library/Frameworks/Python.framework/Versions/3.5/bin/python3"))
+
 #'    i = 1:5
 #' t1 <- paste0("atlas", i, "_T1.nii.gz")
 #' flair = paste0("atlas", i, "_FL.nii.gz")
@@ -38,7 +43,6 @@
 #' patchsize = c(35, 35)
 #' outfile = NULL
 #' write_file = TRUE
-#' }
 #' }
 patches_list = function(
   t1, flair = NULL, mask,
