@@ -4,4 +4,4 @@ nose
 keras 
 tensorflow
 statsmodels
-matplotlib
+# matplotlib
