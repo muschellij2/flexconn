@@ -31,7 +31,8 @@ Suggests:
     covr,
     knitr,
     rmarkdown,
-    testthat
+    testthat,
+    grDevices
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/muschellij2/flexconn
