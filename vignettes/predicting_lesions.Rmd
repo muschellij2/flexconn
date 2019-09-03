@@ -23,8 +23,7 @@ library(flexconn)
 ## Installing FLEXCONN
 
 FLEXCONN stands for Fast Lesion Extraction using Convolutional Neural Networks, which the main goal is to segment lesions from magnetic resonance images (MRIs) from patients with multiple sclerosis (MS).  The methods are described here:
-https://arxiv.org/abs/1803.09172.  Patients with MS commonly have 2 MRI sequences done, T1-weighted images and fluid attenuated inversion recovery (FLAIR)
-FLEXCONN requires a number of Python modules to run.  You can install them either system wide (not shown) or using `reticulate`.  The `reticulate` way is wrapped in `install_flexconn`:
+https://arxiv.org/abs/1803.09172.  Patients with MS commonly have 2 MRI sequences done, T1-weighted images and fluid attenuated inversion recovery (FLAIR).  FLEXCONN requires a number of Python modules to run.  You can install them either system wide (not shown) or using `reticulate`.  The `reticulate` way is wrapped in `install_flexconn`:
 
 ```{r, eval = FALSE}
 flexconn::install_flexconn()
@@ -53,20 +52,20 @@ model
 
 ## Downloading Data
 
-Again, we need a T1-weighted and FLAIR image to do prediction.  We download some example data here
+Again, we need a T1-weighted and FLAIR image to do prediction.  We use some example data here from the package and plot each one.  The `gt` object is the ground truth, manual segmentation:
+
 ```{r dl_data}
-t1_file = tempfile(fileext = ".nii.gz")
-download.file(paste0(base_url, "T1.nii.gz"), 
-              destfile = t1_file)
+t1_file = system.file("extdata", "MPRAGE.nii.gz", package = "flexconn")
 t1 = readnii(t1_file)
 ortho2(robust_window(t1))
 
-flair_file = tempfile(fileext = ".nii.gz")
-download.file(paste0(base_url, "FLAIR.nii.gz"), 
-              destfile = flair_file)
+flair_file = system.file("extdata", "FLAIR.nii.gz", package = "flexconn")
 flair = readnii(flair_file)
 ortho2(robust_window(flair))
 
+gt_file = system.file("extdata", "MPRAGE_manual.nii.gz", package = "flexconn")
+gt = readnii(gt_file)
+ortho2(robust_window(flair), gt, xyz = xyz(gt))
 ```
 
 ## Predicting Lesions 
@@ -106,4 +105,8 @@ pred = remove_small_components(res)
 
 ```{r plot_binary}
 ortho2(robust_window(flair), pred, xyz = xyz(pred), col.y = "#FF000080")
+```
+
+```{r dice}
+fast_dice(pred, gt)
 ```

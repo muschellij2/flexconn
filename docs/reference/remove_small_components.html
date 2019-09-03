@@ -125,7 +125,7 @@
     <p>Remove connected objects with volume &lt;27 voxels</p>
     </div>
 
-    <pre class="usage"><span class='fu'>remove_small_components</span>(<span class='no'>img</span>, <span class='kw'>threshold</span> <span class='kw'>=</span> <span class='fl'>0.34</span>)</pre>
+    <pre class="usage"><span class='fu'>remove_small_components</span>(<span class='no'>img</span>, <span class='kw'>threshold</span> <span class='kw'>=</span> <span class='fl'>0.34</span>, <span class='kw'>voxel_threshold</span> <span class='kw'>=</span> <span class='fl'>27</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -138,7 +138,13 @@ object of class <code>nifti</code> or an array</p></td>
     </tr>
     <tr>
       <th>threshold</th>
-      <td><p>threshold to apply to image to create a mask</p></td>
+      <td><p>threshold to apply to image to create a mask (
+less than or equal)</p></td>
+    </tr>
+    <tr>
+      <th>voxel_threshold</th>
+      <td><p>Threshold of number of voxels to remove if smaller
+than this number (strict inequality)</p></td>
     </tr>
     </table>
 

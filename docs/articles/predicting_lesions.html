@@ -100,7 +100,7 @@
 <div id="installing-flexconn" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installing-flexconn" class="anchor"></a>Installing FLEXCONN</h2>
-<p>FLEXCONN stands for Fast Lesion Extraction using Convolutional Neural Networks, which the main goal is to segment lesions from magnetic resonance images (MRIs) from patients with multiple sclerosis (MS). The methods are described here: <a href="https://arxiv.org/abs/1803.09172" class="uri">https://arxiv.org/abs/1803.09172</a>. Patients with MS commonly have 2 MRI sequences done, T1-weighted images and fluid attenuated inversion recovery (FLAIR) FLEXCONN requires a number of Python modules to run. You can install them either system wide (not shown) or using <code>reticulate</code>. The <code>reticulate</code> way is wrapped in <code>install_flexconn</code>:</p>
+<p>FLEXCONN stands for Fast Lesion Extraction using Convolutional Neural Networks, which the main goal is to segment lesions from magnetic resonance images (MRIs) from patients with multiple sclerosis (MS). The methods are described here: <a href="https://arxiv.org/abs/1803.09172" class="uri">https://arxiv.org/abs/1803.09172</a>. Patients with MS commonly have 2 MRI sequences done, T1-weighted images and fluid attenuated inversion recovery (FLAIR). FLEXCONN requires a number of Python modules to run. You can install them either system wide (not shown) or using <code>reticulate</code>. The <code>reticulate</code> way is wrapped in <code>install_flexconn</code>:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">flexconn<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/flexconn/topics/install_flexconn">install_flexconn</a></span>()</a></code></pre></div>
 </div>
 <div id="downloading-a-model" class="section level2">
@@ -170,47 +170,62 @@
 <div id="downloading-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#downloading-data" class="anchor"></a>Downloading Data</h2>
-<p>Again, we need a T1-weighted and FLAIR image to do prediction. We download some example data here</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">t1_file =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/tempfile">tempfile</a></span>(<span class="dt">fileext =</span> <span class="st">".nii.gz"</span>)</a>
-<a class="sourceLine" id="cb5-2" title="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/download.file">download.file</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(base_url, <span class="st">"T1.nii.gz"</span>), </a>
-<a class="sourceLine" id="cb5-3" title="3">              <span class="dt">destfile =</span> t1_file)</a>
-<a class="sourceLine" id="cb5-4" title="4">t1 =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/readNIfTI2">readnii</a></span>(t1_file)</a>
-<a class="sourceLine" id="cb5-5" title="5"><span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/ortho2">ortho2</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/robust_window">robust_window</a></span>(t1))</a></code></pre></div>
+<p>Again, we need a T1-weighted and FLAIR image to do prediction. We use some example data here from the package and plot each one. The <code>gt</code> object is the ground truth, manual segmentation:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">t1_file =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata"</span>, <span class="st">"MPRAGE.nii.gz"</span>, <span class="dt">package =</span> <span class="st">"flexconn"</span>)</a>
+<a class="sourceLine" id="cb5-2" title="2">t1 =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/readNIfTI2">readnii</a></span>(t1_file)</a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/ortho2">ortho2</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/robust_window">robust_window</a></span>(t1))</a></code></pre></div>
 <p><img src="predicting_lesions_files/figure-html/dl_data-1.png" width="700"></p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"></a>
-<a class="sourceLine" id="cb6-2" title="2">flair_file =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/tempfile">tempfile</a></span>(<span class="dt">fileext =</span> <span class="st">".nii.gz"</span>)</a>
-<a class="sourceLine" id="cb6-3" title="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/download.file">download.file</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(base_url, <span class="st">"FLAIR.nii.gz"</span>), </a>
-<a class="sourceLine" id="cb6-4" title="4">              <span class="dt">destfile =</span> flair_file)</a>
-<a class="sourceLine" id="cb6-5" title="5">flair =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/readNIfTI2">readnii</a></span>(flair_file)</a>
-<a class="sourceLine" id="cb6-6" title="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/ortho2">ortho2</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/robust_window">robust_window</a></span>(flair))</a></code></pre></div>
+<a class="sourceLine" id="cb6-2" title="2">flair_file =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata"</span>, <span class="st">"FLAIR.nii.gz"</span>, <span class="dt">package =</span> <span class="st">"flexconn"</span>)</a>
+<a class="sourceLine" id="cb6-3" title="3">flair =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/readNIfTI2">readnii</a></span>(flair_file)</a>
+<a class="sourceLine" id="cb6-4" title="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/ortho2">ortho2</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/robust_window">robust_window</a></span>(flair))</a></code></pre></div>
 <p><img src="predicting_lesions_files/figure-html/dl_data-2.png" width="700"></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"></a>
+<a class="sourceLine" id="cb7-2" title="2">gt_file =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata"</span>, <span class="st">"MPRAGE_manual.nii.gz"</span>, <span class="dt">package =</span> <span class="st">"flexconn"</span>)</a>
+<a class="sourceLine" id="cb7-3" title="3">gt =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/readNIfTI2">readnii</a></span>(gt_file)</a>
+<a class="sourceLine" id="cb7-4" title="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/ortho2">ortho2</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/robust_window">robust_window</a></span>(flair), gt, <span class="dt">xyz =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/xyz">xyz</a></span>(gt))</a></code></pre></div>
+<p><img src="predicting_lesions_files/figure-html/dl_data-3.png" width="700"></p>
 </div>
 <div id="predicting-lesions" class="section level2">
 <h2 class="hasAnchor">
 <a href="#predicting-lesions" class="anchor"></a>Predicting Lesions</h2>
 <p>Here we will predict using the pre-trained model and we</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">res =<span class="st"> </span><span class="kw"><a href="../reference/flexconn_predict.html">flexconn_predict</a></span>(model,</a>
-<a class="sourceLine" id="cb7-2" title="2">                       <span class="dt">t1 =</span> t1_file,</a>
-<a class="sourceLine" id="cb7-3" title="3">                       <span class="dt">flair =</span> flair_file)</a>
-<a class="sourceLine" id="cb7-4" title="4"><span class="co">#&gt; Normalizing Images</span></a>
-<a class="sourceLine" id="cb7-5" title="5"><span class="co">#&gt; 99th quantile is 1136581.36, bandwidth =14207.267, gridsize =80</span></a>
-<a class="sourceLine" id="cb7-6" title="6"><span class="co">#&gt; 4 peaks found.</span></a>
-<a class="sourceLine" id="cb7-7" title="7"><span class="co">#&gt; Peak found at 1044511.80550394 for T1</span></a>
-<a class="sourceLine" id="cb7-8" title="8"><span class="co">#&gt; 99th quantile is 34706, bandwidth =433.825, gridsize =80</span></a>
-<a class="sourceLine" id="cb7-9" title="9"><span class="co">#&gt; 5 peaks found.</span></a>
-<a class="sourceLine" id="cb7-10" title="10"><span class="co">#&gt; Peak found at 28277.2167322835 for FL</span></a>
-<a class="sourceLine" id="cb7-11" title="11"><span class="co">#&gt; Predicting from model</span></a>
-<a class="sourceLine" id="cb7-12" title="12"><span class="co">#&gt; ===========================================================================</span></a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">res =<span class="st"> </span><span class="kw"><a href="../reference/flexconn_predict.html">flexconn_predict</a></span>(model,</a>
+<a class="sourceLine" id="cb8-2" title="2">                       <span class="dt">t1 =</span> t1_file,</a>
+<a class="sourceLine" id="cb8-3" title="3">                       <span class="dt">flair =</span> flair_file)</a>
+<a class="sourceLine" id="cb8-4" title="4"><span class="co">#&gt; Normalizing Images</span></a>
+<a class="sourceLine" id="cb8-5" title="5"><span class="co">#&gt; 99th quantile is 1136581.056, bandwidth =14207.263, gridsize =80</span></a>
+<a class="sourceLine" id="cb8-6" title="6"><span class="co">#&gt; 4 peaks found.</span></a>
+<a class="sourceLine" id="cb8-7" title="7"><span class="co">#&gt; Peak found at 1044512.47383877 for T1</span></a>
+<a class="sourceLine" id="cb8-8" title="8"><span class="co">#&gt; 99th quantile is 34706.499, bandwidth =433.831, gridsize =80</span></a>
+<a class="sourceLine" id="cb8-9" title="9"><span class="co">#&gt; 5 peaks found.</span></a>
+<a class="sourceLine" id="cb8-10" title="10"><span class="co">#&gt; Peak found at 28277.7755924928 for FL</span></a>
+<a class="sourceLine" id="cb8-11" title="11"><span class="co">#&gt; Predicting from model</span></a>
+<a class="sourceLine" id="cb8-12" title="12"><span class="co">#&gt; ===========================================================================</span></a></code></pre></div>
 <p>Here we overlay the probabilities on the FLAIR image:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">col.y =<span class="st"> </span>oro.nifti<span class="op">::</span><span class="kw">hotmetal</span>()</a>
-<a class="sourceLine" id="cb8-2" title="2">col.y =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/grDevices/topics/col2rgb">col2rgb</a></span>(col.y, <span class="dt">alpha =</span> <span class="fl">0.5</span>)</a>
-<a class="sourceLine" id="cb8-3" title="3">col.y =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/grDevices/topics/rgb">rgb</a></span>(col.y[<span class="dv">1</span>,], col.y[<span class="dv">2</span>,], col.y[<span class="dv">3</span>,], col.y[<span class="dv">4</span>,], <span class="dt">maxColorValue =</span> <span class="dv">255</span>)</a>
-<a class="sourceLine" id="cb8-4" title="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/ortho2">ortho2</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/robust_window">robust_window</a></span>(flair), res, <span class="dt">col.y =</span> col.y)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">col.y =<span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"#010000"</span>, <span class="st">"#0C0000"</span>, <span class="st">"#170000"</span>, <span class="st">"#210000"</span>, <span class="st">"#2C0000"</span>,</a>
+<a class="sourceLine" id="cb9-2" title="2">            <span class="st">"#360000"</span>, <span class="st">"#410000"</span>, <span class="st">"#4C0000"</span>, <span class="st">"#560000"</span>, <span class="st">"#610000"</span>,</a>
+<a class="sourceLine" id="cb9-3" title="3">            <span class="st">"#6C0000"</span>, <span class="st">"#760000"</span>, <span class="st">"#810000"</span>, <span class="st">"#8B0000"</span>, <span class="st">"#960000"</span>,</a>
+<a class="sourceLine" id="cb9-4" title="4">            <span class="st">"#A10000"</span>, <span class="st">"#AB0000"</span>, <span class="st">"#B60000"</span>, <span class="st">"#C10000"</span>, <span class="st">"#CB0000"</span>,</a>
+<a class="sourceLine" id="cb9-5" title="5">            <span class="st">"#D60000"</span>, <span class="st">"#E00000"</span>, <span class="st">"#EB0000"</span>, <span class="st">"#F60000"</span>, <span class="st">"#FF0100"</span>,</a>
+<a class="sourceLine" id="cb9-6" title="6">            <span class="st">"#FF0C00"</span>, <span class="st">"#FF1700"</span>, <span class="st">"#FF2100"</span>, <span class="st">"#FF2C00"</span>, <span class="st">"#FF3600"</span>,</a>
+<a class="sourceLine" id="cb9-7" title="7">            <span class="st">"#FF4100"</span>, <span class="st">"#FF4C00"</span>, <span class="st">"#FF5600"</span>, <span class="st">"#FF6100"</span>, <span class="st">"#FF6C00"</span>,</a>
+<a class="sourceLine" id="cb9-8" title="8">            <span class="st">"#FF7600"</span>, <span class="st">"#FF8100"</span>, <span class="st">"#FF8B00"</span>, <span class="st">"#FF9600"</span>, <span class="st">"#FFA100"</span>,</a>
+<a class="sourceLine" id="cb9-9" title="9">            <span class="st">"#FFAB00"</span>, <span class="st">"#FFB600"</span>, <span class="st">"#FFC100"</span>, <span class="st">"#FFCB00"</span>, <span class="st">"#FFD600"</span>,</a>
+<a class="sourceLine" id="cb9-10" title="10">            <span class="st">"#FFE000"</span>, <span class="st">"#FFEB00"</span>, <span class="st">"#FFF600"</span>, <span class="st">"#FFFF02"</span>, <span class="st">"#FFFF12"</span>,</a>
+<a class="sourceLine" id="cb9-11" title="11">            <span class="st">"#FFFF22"</span>, <span class="st">"#FFFF32"</span>, <span class="st">"#FFFF42"</span>, <span class="st">"#FFFF52"</span>, <span class="st">"#FFFF62"</span>,</a>
+<a class="sourceLine" id="cb9-12" title="12">            <span class="st">"#FFFF72"</span>, <span class="st">"#FFFF81"</span>, <span class="st">"#FFFF91"</span>, <span class="st">"#FFFFA1"</span>, <span class="st">"#FFFFB1"</span>,</a>
+<a class="sourceLine" id="cb9-13" title="13">            <span class="st">"#FFFFC1"</span>, <span class="st">"#FFFFD1"</span>, <span class="st">"#FFFFE1"</span>, <span class="st">"#FFFFF1"</span>)</a>
+<a class="sourceLine" id="cb9-14" title="14">col.y =<span class="st"> </span>grDevices<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/grDevices/topics/col2rgb">col2rgb</a></span>(col.y, <span class="dt">alpha =</span> <span class="fl">0.5</span>)</a>
+<a class="sourceLine" id="cb9-15" title="15">col.y =<span class="st"> </span>grDevices<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/grDevices/topics/rgb">rgb</a></span>(col.y[<span class="dv">1</span>,], col.y[<span class="dv">2</span>,], col.y[<span class="dv">3</span>,], col.y[<span class="dv">4</span>,], <span class="dt">maxColorValue =</span> <span class="dv">255</span>)</a>
+<a class="sourceLine" id="cb9-16" title="16"><span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/ortho2">ortho2</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/robust_window">robust_window</a></span>(flair), res, <span class="dt">col.y =</span> col.y)</a></code></pre></div>
 <p><img src="predicting_lesions_files/figure-html/plot_result-1.png" width="700"></p>
 <p>Here we see we have a probability map of lesions. To get a binary mask, we can use the <code>remove_small_components</code>, which thresholds the image and removes voxels with fewer than 27 connected voxels:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">pred =<span class="st"> </span><span class="kw"><a href="../reference/remove_small_components.html">remove_small_components</a></span>(res)</a></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/ortho2">ortho2</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/robust_window">robust_window</a></span>(flair), pred, <span class="dt">xyz =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/xyz">xyz</a></span>(pred), <span class="dt">col.y =</span> <span class="st">"#FF000080"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">pred =<span class="st"> </span><span class="kw"><a href="../reference/remove_small_components.html">remove_small_components</a></span>(res)</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/ortho2">ortho2</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/robust_window">robust_window</a></span>(flair), pred, <span class="dt">xyz =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/xyz">xyz</a></span>(pred), <span class="dt">col.y =</span> <span class="st">"#FF000080"</span>)</a></code></pre></div>
 <p><img src="predicting_lesions_files/figure-html/plot_binary-1.png" width="700"></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/neurobase/topics/fast_dice_tab">fast_dice</a></span>(pred, gt)</a>
+<a class="sourceLine" id="cb12-2" title="2"><span class="co">#&gt; [1] 0.2118038</span></a></code></pre></div>
 </div>
   </div>
 
