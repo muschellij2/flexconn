@@ -13,3 +13,6 @@
 ^.*\.Rproj$
 ^flexconn.R$
 ^flexconn_wpackage.R$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

@@ -4,14 +4,18 @@
 \alias{remove_small_components}
 \title{Remove connected objects with volume <27 voxels}
 \usage{
-remove_small_components(img, threshold = 0.34)
+remove_small_components(img, threshold = 0.34, voxel_threshold = 27)
 }
 \arguments{
 \item{img}{A probability image from \code{\link{flexconn_predict_with_volume}}
 or \code{\link{flexconn_predict}}, should be
 object of class \code{nifti} or an array}
 
-\item{threshold}{threshold to apply to image to create a mask}
+\item{threshold}{threshold to apply to image to create a mask (
+less than or equal)}
+
+\item{voxel_threshold}{Threshold of number of voxels to remove if smaller
+than this number (strict inequality)}
 }
 \value{
 An array or object of class \code{nifti}
