@@ -59,3 +59,25 @@ Predict from FLEXCONN model
 If \code{mask = NULL}, a mask will be generated for
 \code{t1 > 0}.
 }
+\examples{
+\dontrun{
+model_file = tempfile(fileext = ".h5")
+base_url = paste0("https://github.com/muschellij2/flexconnr",
+"/raw/master/inst/extdata/")
+model_url = paste0(base_url, "21atlases/",
+"atlas_with_mask1/FLEXCONNmodel2D_35x35_17-10-2017_21-53-35.h5")
+download.file(model_url, destfile = model_file)
+
+t1_file = tempfile(fileext = ".nii.gz")
+download.file(paste0(base_url, "T1.nii.gz"), destfile = t1_file)
+
+flair_file = tempfile(fileext = ".nii.gz")
+download.file(paste0(base_url, "FLAIR.nii.gz"), destfile = flair_file)
+
+model = keras::load_model_hdf5(model_file)
+res = flexconn_predict(model,
+t1 = t1_file,
+flair = flair_file)
+}
+
+}

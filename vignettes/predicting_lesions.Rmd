@@ -1,0 +1,97 @@
+---
+title: "Predicting Lesions with FLEXCONN"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Predicting Lesions with FLEXCONN}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(neurobase)
+library(flexconn)
+```
+
+
+## Installing FLEXCONN
+
+FLEXCONN stands for Fast Lesion Extraction using Convolutional Neural Networks, which the main goal is to segment lesions from magnetic resonance images (MRIs) from patients with multiple sclerosis (MS).  The methods are described here:
+https://arxiv.org/abs/1803.09172.  Patients with MS commonly have 2 MRI sequences done, T1-weighted images and fluid attenuated inversion recovery (FLAIR)
+FLEXCONN requires a number of Python modules to run.  You can install them either system wide (not shown) or using `reticulate`.  The `reticulate` way is wrapped in `install_flexconn`:
+
+```{r, eval = FALSE}
+flexconn::install_flexconn()
+```
+
+## Downloading a Model 
+
+Here we download one of the fit models from FLEXCONN 1.1 (https://www.nitrc.org/projects/flexconn/), which is from one reader, a `35x35` patch size (2D model) and it was fit using 21 atlases.  
+
+```{r dl_model}
+model_file = tempfile(fileext = ".h5")
+base_url = paste0(
+  "https://github.com/muschellij2/flexconnr",
+  "/raw/master/inst/extdata/")
+model_url = paste0(
+  base_url, "21atlases/",
+  "atlas_with_mask1/FLEXCONNmodel2D_35x35_17-10-2017_21-53-35.h5")
+download.file(model_url, destfile = model_file)
+```
+
+We will load the model into `R` so we can predict using it
+```{r load_model}
+model = keras::load_model_hdf5(model_file)
+model
+```
+
+## Downloading Data
+
+Again, we need a T1-weighted and FLAIR image to do prediction.  We download some example data here
+```{r dl_data}
+t1_file = tempfile(fileext = ".nii.gz")
+download.file(paste0(base_url, "T1.nii.gz"), 
+              destfile = t1_file)
+t1 = readnii(t1_file)
+ortho2(robust_window(t1))
+
+flair_file = tempfile(fileext = ".nii.gz")
+download.file(paste0(base_url, "FLAIR.nii.gz"), 
+              destfile = flair_file)
+flair = readnii(flair_file)
+ortho2(robust_window(flair))
+
+```
+
+## Predicting Lesions 
+
+Here we will predict using the pre-trained model and we 
+```{r predict_model}
+res = flexconn_predict(model,
+                       t1 = t1_file,
+                       flair = flair_file)
+```
+
+Here we overlay the probabilities on the FLAIR image:
+```{r plot_result}
+col.y = oro.nifti::hotmetal()
+col.y = col2rgb(col.y, alpha = 0.5)
+col.y = rgb(col.y[1,], col.y[2,], col.y[3,], col.y[4,], maxColorValue = 255)
+ortho2(robust_window(flair), res, col.y = col.y)
+```
+
+Here we see we have a probability map of lesions.  To get a binary mask, we can use the `remove_small_components`, which thresholds the image and removes voxels with fewer than 27 connected voxels:
+
+```{r make_binary}
+pred = remove_small_components(res)
+```
+
+```{r plot_binary}
+ortho2(robust_window(flair), pred, xyz = xyz(pred), col.y = "#FF000080")
+```

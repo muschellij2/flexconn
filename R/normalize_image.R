@@ -144,7 +144,9 @@ flexconn_image_peak <- function(vol,
     ))
   }
 
-  kde = sm$nonparametric$KDEUnivariate(temp)
+  # as.numeric because
+  # ValueError: Buffer dtype mismatch, expected 'DOUBLE' but got 'long'
+  kde = sm$nonparametric$KDEUnivariate(as.numeric(temp))
 
   kde$fit(kernel = 'gau', bw = bw, gridsize=gridsize, fft=TRUE)
   x_mat = 100.0 * kde$density

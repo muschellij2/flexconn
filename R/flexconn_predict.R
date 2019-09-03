@@ -24,6 +24,27 @@
 #' @importFrom utils txtProgressBar setTxtProgressBar
 #' @importFrom stats predict
 #' @rdname flexconn_predict
+#' @examples
+#' \dontrun{
+#' model_file = tempfile(fileext = ".h5")
+#' base_url = paste0("https://github.com/muschellij2/flexconnr",
+#' "/raw/master/inst/extdata/")
+#' model_url = paste0(base_url, "21atlases/",
+#' "atlas_with_mask1/FLEXCONNmodel2D_35x35_17-10-2017_21-53-35.h5")
+#' download.file(model_url, destfile = model_file)
+#'
+#' t1_file = tempfile(fileext = ".nii.gz")
+#' download.file(paste0(base_url, "T1.nii.gz"), destfile = t1_file)
+#'
+#' flair_file = tempfile(fileext = ".nii.gz")
+#' download.file(paste0(base_url, "FLAIR.nii.gz"), destfile = flair_file)
+#'
+#' model = keras::load_model_hdf5(model_file)
+#' res = flexconn_predict(model,
+#' t1 = t1_file,
+#' flair = flair_file)
+#' }
+#'
 flexconn_predict_patch = function(
   model, t1, flair, t2 = NULL,
   mask = NULL,
@@ -54,6 +75,12 @@ flexconn_predict = function(
   patchsize, verbose = TRUE,
   normalize = TRUE, ..., batch_size = 1) {
 
+  if (is.character(model)) {
+  	if (verbose) {
+  		message("Loading Model")
+  	}
+  	model = keras::load_model_hdf5(model)
+  }
   n_images = tryCatch({
     length(model$input)
   })
@@ -108,6 +135,13 @@ flexconn_predict_with_patches = function(
   mask = NULL,
   patchsize, verbose = TRUE, ..., batch_size = 1) {
 
+  if (is.character(model)) {
+  	if (verbose) {
+  		message("Loading Model")
+  	}
+  	model = keras::load_model_hdf5(model)
+  }
+
   if (verbose) {
     message("Creating Patches")
   }
@@ -145,6 +179,13 @@ flexconn_predict_with_volume = function(
   model, t1, flair, t2 = NULL,
   verbose = TRUE, normalize = TRUE,
   ..., batch_size = 1) {
+
+  if (is.character(model)) {
+  	if (verbose) {
+  		message("Loading Model")
+  	}
+  	model = keras::load_model_hdf5(model)
+  }
 
   n_images = tryCatch({
     length(model$input)

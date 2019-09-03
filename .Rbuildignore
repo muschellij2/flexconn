@@ -11,5 +11,5 @@
 ^flexconn\.Rproj$
 ^\.Rproj\.user$
 ^.*\.Rproj$
-flexconn.R$
-flexconn_wpackage.R$
+^flexconn.R$
+^flexconn_wpackage.R$

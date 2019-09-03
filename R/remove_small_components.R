@@ -4,7 +4,10 @@
 #' @param img A probability image from \code{\link{flexconn_predict_with_volume}}
 #' or \code{\link{flexconn_predict}}, should be
 #' object of class \code{nifti} or an array
-#' @param threshold threshold to apply to image to create a mask
+#' @param threshold threshold to apply to image to create a mask (
+#' less than or equal)
+#' @param voxel_threshold Threshold of number of voxels to remove if smaller
+#' than this number (strict inequality)
 #'
 #' @return An array or object of class \code{nifti}
 #' @export
@@ -24,10 +27,11 @@
 #' d = rep(50, 3)
 #' img = array(runif(prod(d), max = 1), dim = d)
 #' cc = remove_small_components(img, threshold = 0.9)
-remove_small_components = function(img, threshold = 0.34) {
+remove_small_components = function(img, threshold = 0.34,
+                                   voxel_threshold = 27) {
   sc = reticulate::import("scipy")
   np <- reticulate::import("numpy")
-  seg = as.array(img > 0.34)
+  seg = as.array(img >= threshold)
 
   seg = reticulate::r_to_py(seg)
   seg = seg$astype(np$float32)
@@ -37,7 +41,7 @@ remove_small_components = function(img, threshold = 0.34) {
   label = lab[[1]]
   ncomp = lab[[2]]
   tab = table(label)
-  remove = as.numeric(names(tab)[ tab < 27])
+  remove = as.numeric(names(tab)[ tab < voxel_threshold])
   label[ label %in% remove] = 0
   label[label > 0] = 1
   if (inherits(img, "nifti")) {
