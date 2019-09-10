@@ -20,7 +20,7 @@ License: GPL-3
 Imports:
     keras,
     tensorflow,
-    neurobase,
+    neurobase (>= 1.27.7),
     RNifti,
     KernSmooth,
     reticulate,

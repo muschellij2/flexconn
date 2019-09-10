@@ -108,5 +108,5 @@ ortho2(robust_window(flair), pred, xyz = xyz(pred), col.y = "#FF000080")
 ```
 
 ```{r dice}
-fast_dice(pred, gt)
+neurobase::fast_dice(pred, gt)
 ```
