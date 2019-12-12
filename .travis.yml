@@ -14,6 +14,9 @@ before_script:
   - setup_python ${TRAVIS_PYTHON_VERSION} ;
   - x=`which python` ; echo ${x} ;
   - x=`which python3` ;  echo ${x} ;  
+  - x=`which pip` ;  echo ${x} ;  
+  - x=`which pip3` ;  echo ${x} ; 
+  - echo $PATH
   - if [ "$TRAVIS_OS_NAME" == "osx" ];
     then
       echo $USER ;
