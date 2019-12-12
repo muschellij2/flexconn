@@ -11,19 +11,12 @@ before_script:
   - cat ${fname}; source ${fname}; rm ${fname}
   - export TRAVIS_PYTHON_VERSION=3.6;
   - echo $TRAVIS_BUILD_LANG_ARCHIVES_PYTHON; 
-  - setup_python ${TRAVIS_PYTHON_VERSION} ;
+  - setup_python ${TRAVIS_PYTHON_VERSION} true ;
   - x=`which python` ; echo ${x} ;
   - x=`which python3` ;  echo ${x} ;  
   - x=`which pip` ;  echo ${x} ;  
   - x=`which pip3` ;  echo ${x} ; 
   - echo $PATH
-  - if [ "$TRAVIS_OS_NAME" == "osx" ];
-    then
-      echo $USER ;
-      ls /Library/Frameworks/Python.framework/Versions/;
-      echo ;
-      export CI_PYTHON_VERSION=$TRAVIS_PYTHON_VERSION;
-    fi
   - install_python_requirements ;
   # - version=3.6
   # - export TRAVIS_PYTHON_VERSION="${version}"
