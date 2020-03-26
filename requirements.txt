@@ -4,4 +4,5 @@ nose
 keras 
 tensorflow
 statsmodels
+h5py
 # matplotlib
