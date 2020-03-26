@@ -1,5 +1,12 @@
 language: R
 cache: packages
+warnings_are_errors: true
+
+env:
+  global:
+  - RGL_USE_NULL=TRUE
+  - R_REMOTES_NO_ERRORS_FROM_WARNINGS=true
+
 
 os:
   - linux
