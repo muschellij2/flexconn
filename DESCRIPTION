@@ -1,7 +1,7 @@
 Type: Package
 Package: flexconn
 Title: FLEXCONN Model
-Version: 0.5.4.2
+Version: 0.5.4.3
 Authors@R: 
     c(person(given = "John",
            family = "Muschelli",
