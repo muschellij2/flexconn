@@ -4,8 +4,14 @@
 \alias{flexconn_model}
 \title{FLEXCONN Model}
 \usage{
-flexconn_model(prefixes = c("t1", "fl"), ndim = 2, ds = 2,
-  num_filters = 128, kernel_size_1 = 3, kernel_size_2 = 5)
+flexconn_model(
+  prefixes = c("t1", "fl"),
+  ndim = 2,
+  ds = 2,
+  num_filters = 128,
+  kernel_size_1 = 3,
+  kernel_size_2 = 5
+)
 }
 \arguments{
 \item{prefixes}{The prefixes for each of the layers of the model.}

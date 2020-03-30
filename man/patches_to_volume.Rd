@@ -5,11 +5,16 @@
 \alias{get_volume_from_patches}
 \title{Convert Patches to a Volume}
 \usage{
-patches_to_volume(patches, indices, patchsize, verbose = TRUE,
-  orig_dim = NULL)
+patches_to_volume(patches, indices, patchsize, verbose = TRUE, orig_dim = NULL)
 
-get_volume_from_patches(patches, indices, patchsize, verbose = TRUE,
-  invert_pad = TRUE, orig_dim = NULL)
+get_volume_from_patches(
+  patches,
+  indices,
+  patchsize,
+  verbose = TRUE,
+  invert_pad = TRUE,
+  orig_dim = NULL
+)
 }
 \arguments{
 \item{patches}{A matrix of patches, generally from

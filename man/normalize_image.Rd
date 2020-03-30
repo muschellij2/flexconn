@@ -6,14 +6,20 @@
 \alias{flexconn_image_peak}
 \title{Normalize Image Based on the Peak}
 \usage{
-normalize_image(vol, contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
-  peak_estimator = c("Python", "R"), verbose = TRUE)
+normalize_image(
+  vol,
+  contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
+  peak_estimator = c("Python", "R"),
+  verbose = TRUE
+)
 
-image_peak(vol, contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
-  verbose = TRUE)
+image_peak(vol, contrast = c("T1", "PD", "T2", "FLAIR", "FL"), verbose = TRUE)
 
-flexconn_image_peak(vol, contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
-  verbose = TRUE)
+flexconn_image_peak(
+  vol,
+  contrast = c("T1", "PD", "T2", "FLAIR", "FL"),
+  verbose = TRUE
+)
 }
 \arguments{
 \item{vol}{3D array or \code{nifti} image}

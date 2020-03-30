@@ -7,17 +7,34 @@
 \alias{get_mask_patches}
 \title{Get Patches from 3D Volume}
 \usage{
-get_patch_from_volume(vol, mask = NULL, patchsize, verbose = TRUE,
-  pad = TRUE, normalize = TRUE, contrast, seed = NULL,
-  run_mask_patches = TRUE, peak_estimator = c("Python", "R"))
+get_patch_from_volume(
+  vol,
+  mask = NULL,
+  patchsize,
+  verbose = TRUE,
+  pad = TRUE,
+  normalize = TRUE,
+  contrast,
+  seed = NULL,
+  run_mask_patches = TRUE,
+  peak_estimator = c("Python", "R"),
+  ...
+)
 
 get_num_patches(mask)
 
-norm_pad(vol, mask = NULL, patchsize, verbose = TRUE, pad = TRUE,
-  normalize = TRUE, peak_estimator = c("Python", "R"), contrast)
+norm_pad(
+  vol,
+  mask = NULL,
+  patchsize,
+  verbose = TRUE,
+  pad = TRUE,
+  normalize = TRUE,
+  peak_estimator = c("Python", "R"),
+  contrast
+)
 
-get_mask_patches(mask, patchsize, pad = TRUE, seed = NULL,
-  verbose = TRUE)
+get_mask_patches(mask, patchsize, pad = TRUE, seed = NULL, verbose = TRUE)
 }
 \arguments{
 \item{vol}{3D array or \code{nifti} image}

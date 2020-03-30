@@ -168,7 +168,8 @@ get_patch_from_volume <- function(
   normalize = TRUE, contrast,
   seed = NULL,
   run_mask_patches = TRUE,
-  peak_estimator = c("Python", "R")
+  peak_estimator = c("Python", "R"),
+  ...
 ) {
 
   ndim = length(patchsize)

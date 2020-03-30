@@ -1,7 +1,7 @@
 Type: Package
 Package: flexconn
 Title: FLEXCONN Model
-Version: 0.5.4.3
+Version: 0.5.4.4
 Authors@R: 
     c(person(given = "John",
            family = "Muschelli",
@@ -37,5 +37,5 @@ Encoding: UTF-8
 LazyData: true
 URL: https://github.com/muschellij2/flexconn
 BugReports: https://github.com/muschellij2/flexconn/issues
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 VignetteBuilder: knitr

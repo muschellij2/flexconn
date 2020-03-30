@@ -4,8 +4,15 @@
 \alias{flexconn_conv_chain}
 \title{FLEXCONN Convolution Chain}
 \usage{
-flexconn_conv_chain(object, ds = 2, num_filters = 128,
-  kernel_size_1 = 3, kernel_size_2 = 5, prefix = NULL, ndim)
+flexconn_conv_chain(
+  object,
+  ds = 2,
+  num_filters = 128,
+  kernel_size_1 = 3,
+  kernel_size_2 = 5,
+  prefix = NULL,
+  ndim
+)
 }
 \arguments{
 \item{object}{Model or layer object}

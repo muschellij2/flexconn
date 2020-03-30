@@ -7,18 +7,54 @@
 \alias{flexconn_predict_with_volume}
 \title{Predict from FLEXCONN model}
 \usage{
-flexconn_predict_patch(model, t1, flair, t2 = NULL, mask = NULL,
-  patchsize, verbose = TRUE, ..., batch_size = 1)
+flexconn_predict_patch(
+  model,
+  t1,
+  flair,
+  t2 = NULL,
+  mask = NULL,
+  patchsize,
+  verbose = TRUE,
+  ...,
+  batch_size = 1
+)
 
-flexconn_predict(model, t1, flair, t2 = NULL, mask = NULL,
-  type = c("volume", "patch"), patchsize, verbose = TRUE,
-  normalize = TRUE, ..., batch_size = 1)
+flexconn_predict(
+  model,
+  t1,
+  flair,
+  t2 = NULL,
+  mask = NULL,
+  type = c("volume", "patch"),
+  patchsize,
+  verbose = TRUE,
+  normalize = TRUE,
+  ...,
+  batch_size = 1
+)
 
-flexconn_predict_with_patches(model, t1, flair, t2 = NULL, mask = NULL,
-  patchsize, verbose = TRUE, ..., batch_size = 1)
+flexconn_predict_with_patches(
+  model,
+  t1,
+  flair,
+  t2 = NULL,
+  mask = NULL,
+  patchsize,
+  verbose = TRUE,
+  ...,
+  batch_size = 1
+)
 
-flexconn_predict_with_volume(model, t1, flair, t2 = NULL,
-  verbose = TRUE, normalize = TRUE, ..., batch_size = 1)
+flexconn_predict_with_volume(
+  model,
+  t1,
+  flair,
+  t2 = NULL,
+  verbose = TRUE,
+  normalize = TRUE,
+  ...,
+  batch_size = 1
+)
 }
 \arguments{
 \item{model}{A keras model object trained}

@@ -4,9 +4,19 @@
 \alias{get_patches}
 \title{Get Patches from T1 and FLAIR image}
 \usage{
-get_patches(t1, flair = NULL, t2 = NULL, mask = NULL, patchsize,
-  pad = TRUE, normalize = TRUE, verbose = TRUE,
-  only_patches = FALSE, seed = NULL, ...)
+get_patches(
+  t1,
+  flair = NULL,
+  t2 = NULL,
+  mask = NULL,
+  patchsize,
+  pad = TRUE,
+  normalize = TRUE,
+  verbose = TRUE,
+  only_patches = FALSE,
+  seed = NULL,
+  ...
+)
 }
 \arguments{
 \item{t1}{3D array or \code{nifti} image}

@@ -18,13 +18,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -50,6 +52,7 @@
 <![endif]-->
 
 
+
   </head>
 
   <body>
@@ -66,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">flexconn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.4.4</span>
       </span>
     </div>
 
@@ -74,7 +77,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -100,7 +103,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/muschellij2/flexconn">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -111,6 +114,7 @@
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -125,17 +129,34 @@
     <p>Get Patches from 3D Volume</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_patch_from_volume</span>(<span class='no'>vol</span>, <span class='kw'>mask</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>patchsize</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>pad</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>contrast</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>run_mask_patches</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>peak_estimator</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"Python"</span>, <span class='st'>"R"</span>))
+    <pre class="usage"><span class='fu'>get_patch_from_volume</span>(
+  <span class='no'>vol</span>,
+  <span class='kw'>mask</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>patchsize</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>pad</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='no'>contrast</span>,
+  <span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>run_mask_patches</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>peak_estimator</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Python"</span>, <span class='st'>"R"</span>),
+  <span class='no'>...</span>
+)
 
 <span class='fu'>get_num_patches</span>(<span class='no'>mask</span>)
 
-<span class='fu'>norm_pad</span>(<span class='no'>vol</span>, <span class='kw'>mask</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>patchsize</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>pad</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>peak_estimator</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"Python"</span>, <span class='st'>"R"</span>), <span class='no'>contrast</span>)
+<span class='fu'>norm_pad</span>(
+  <span class='no'>vol</span>,
+  <span class='kw'>mask</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>patchsize</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>pad</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>peak_estimator</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Python"</span>, <span class='st'>"R"</span>),
+  <span class='no'>contrast</span>
+)
 
-<span class='fu'>get_mask_patches</span>(<span class='no'>mask</span>, <span class='no'>patchsize</span>, <span class='kw'>pad</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+<span class='fu'>get_mask_patches</span>(<span class='no'>mask</span>, <span class='no'>patchsize</span>, <span class='kw'>pad</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -197,24 +218,47 @@ either wrapper Python code or native R code.</p></td>
     <p>A list of image and mask Patches</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>user</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.getenv'>Sys.getenv</a></span>(<span class='st'>"USER"</span>)
+    <pre class="examples"><div class='input'><span class='no'>user</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span>(<span class='st'>"USER"</span>)
 <span class='kw'>if</span> (<span class='no'>user</span> <span class='kw'>==</span> <span class='st'>"johnmuschelli"</span>) {
-<span class='kw pkg'>reticulate</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/reticulate/topics/use_python'>use_python</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste0</a></span>(
+<span class='kw pkg'>reticulate</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/reticulate/man/use_python.html'>use_python</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(
 <span class='st'>"/Library/Frameworks/Python.framework/Versions/3.5/bin/python3"</span>))
-<span class='no'>mpl</span> <span class='kw'>=</span> <span class='kw pkg'>reticulate</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/reticulate/topics/import'>import</a></span>(<span class='st'>"matplotlib"</span>)
+<span class='no'>mpl</span> <span class='kw'>=</span> <span class='kw pkg'>reticulate</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/reticulate/man/import.html'>import</a></span>(<span class='st'>"matplotlib"</span>)
 <span class='no'>mpl</span>$<span class='fu'>use</span>(<span class='st'>'TkAgg'</span>)
 }
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>neurobase</span>)</div><div class='output co'>#&gt; <span class='message'>Loading required package: oro.nifti</span></div><div class='output co'>#&gt; <span class='message'>oro.nifti 0.10.1</span></div><div class='input'><span class='no'>fname</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.file'>system.file</a></span>(<span class='st'>"extdata"</span>, <span class='st'>"MPRAGE.nii.gz"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"flexconn"</span>)
-<span class='no'>vol</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/neurobase/topics/readNIfTI2'>readnii</a></span>(<span class='no'>fname</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>neurobase</span>)</div><div class='output co'>#&gt; <span class='message'>Loading required package: oro.nifti</span></div><div class='output co'>#&gt; <span class='message'>oro.nifti 0.10.2</span></div><div class='input'><span class='no'>fname</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata"</span>, <span class='st'>"MPRAGE.nii.gz"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"flexconn"</span>)
+<span class='no'>vol</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/neurobase/man/readNIfTI2.html'>readnii</a></span>(<span class='no'>fname</span>)
 <span class='no'>mask</span> <span class='kw'>=</span> <span class='no'>vol</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>
-<span class='no'>patchsize</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>5</span>, <span class='fl'>5</span>)
+<span class='no'>patchsize</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>5</span>, <span class='fl'>5</span>)
 <span class='no'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
 <span class='no'>patch</span> <span class='kw'>=</span> <span class='fu'>get_patch_from_volume</span>(<span class='no'>vol</span>, <span class='no'>mask</span>, <span class='kw'>patchsize</span> <span class='kw'>=</span> <span class='no'>patchsize</span>,
-<span class='kw'>contrast</span> <span class='kw'>=</span> <span class='st'>"T1"</span>)</div><div class='output co'>#&gt; <span class='message'>99th quantile is 1136581.056, bandwidth =14207.263, gridsize =80</span></div><div class='output co'>#&gt; <span class='message'>4 peaks found.</span></div><div class='output co'>#&gt; <span class='message'>Peak found at 1044512.47383877 for T1</span></div><div class='output co'>#&gt; <span class='message'>Size matrix to create: 1596366x5x5x1</span></div><div class='output co'>#&gt; <span class='message'>Size matrix to create: 1596366x5x5x1</span></div><div class='input'>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rm'>rm</a></span>(<span class='no'>patch</span>)
-
-<span class='no'>patch</span> <span class='kw'>=</span> <span class='fu'>get_patch_from_volume</span>(<span class='no'>vol</span>, <span class='no'>mask</span>, <span class='kw'>patchsize</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>),
-<span class='kw'>contrast</span> <span class='kw'>=</span> <span class='st'>"T1"</span>)</div><div class='output co'>#&gt; <span class='message'>99th quantile is 1136581.056, bandwidth =14207.263, gridsize =80</span></div><div class='output co'>#&gt; <span class='message'>4 peaks found.</span></div><div class='output co'>#&gt; <span class='message'>Peak found at 1044512.47383877 for T1</span></div><div class='output co'>#&gt; <span class='message'>Size matrix to create: 1596366x1x1x1x1</span></div><div class='output co'>#&gt; <span class='message'>Size matrix to create: 1596366x1x1x1x1</span></div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rm'>rm</a></span>(<span class='no'>patch</span>)</div></pre>
+<span class='kw'>contrast</span> <span class='kw'>=</span> <span class='st'>"T1"</span>)</div><div class='output co'>#&gt; <span class='error'>Error in py_module_import(module, convert = convert): ImportError: No module named 'numpy.testing.decorators'</span>
+#&gt; <span class='error'></span>
+#&gt; <span class='error'>Detailed traceback: </span>
+#&gt; <span class='error'>  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/statsmodels/__init__.py", line 10, in &lt;module&gt;</span>
+#&gt; <span class='error'>    from statsmodels.tools.sm_exceptions import (ConvergenceWarning, CacheWriteWarning,</span>
+#&gt; <span class='error'>  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/statsmodels/tools/__init__.py", line 1, in &lt;module&gt;</span>
+#&gt; <span class='error'>    from .tools import add_constant, categorical</span>
+#&gt; <span class='error'>  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/statsmodels/tools/tools.py", line 9, in &lt;module&gt;</span>
+#&gt; <span class='error'>    import pandas as pd</span>
+#&gt; <span class='error'>  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/pandas/__init__.py", line 56, in &lt;module&gt;</span>
+#&gt; <span class='error'>    import pandas.util.testing</span>
+#&gt; <span class='error'>  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/pandas/util/testing.py", line 22, in &lt;module&gt;</span>
+#&gt; <span class='error'>    from numpy.testing.decorators import slow     # noqa</span></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/rm.html'>rm</a></span>(<span class='no'>patch</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: object 'patch' not found</span></div><div class='input'>
+<span class='no'>patch</span> <span class='kw'>=</span> <span class='fu'>get_patch_from_volume</span>(<span class='no'>vol</span>, <span class='no'>mask</span>, <span class='kw'>patchsize</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>),
+<span class='kw'>contrast</span> <span class='kw'>=</span> <span class='st'>"T1"</span>)</div><div class='output co'>#&gt; <span class='error'>Error in py_module_import(module, convert = convert): ImportError: No module named 'numpy.testing.decorators'</span>
+#&gt; <span class='error'></span>
+#&gt; <span class='error'>Detailed traceback: </span>
+#&gt; <span class='error'>  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/statsmodels/__init__.py", line 10, in &lt;module&gt;</span>
+#&gt; <span class='error'>    from statsmodels.tools.sm_exceptions import (ConvergenceWarning, CacheWriteWarning,</span>
+#&gt; <span class='error'>  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/statsmodels/tools/__init__.py", line 1, in &lt;module&gt;</span>
+#&gt; <span class='error'>    from .tools import add_constant, categorical</span>
+#&gt; <span class='error'>  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/statsmodels/tools/tools.py", line 9, in &lt;module&gt;</span>
+#&gt; <span class='error'>    import pandas as pd</span>
+#&gt; <span class='error'>  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/pandas/__init__.py", line 56, in &lt;module&gt;</span>
+#&gt; <span class='error'>    import pandas.util.testing</span>
+#&gt; <span class='error'>  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/pandas/util/testing.py", line 22, in &lt;module&gt;</span>
+#&gt; <span class='error'>    from numpy.testing.decorators import slow     # noqa</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/rm.html'>rm</a></span>(<span class='no'>patch</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: object 'patch' not found</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -227,19 +271,23 @@ either wrapper Python code or native R code.</p></td>
   </div>
 </div>
 
+
       <footer>
       <div class="copyright">
   <p>Developed by John Muschelli, Sigrid Keydana.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 
